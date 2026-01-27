@@ -7,6 +7,7 @@ import { Card, CardBody } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { useDorm } from "@/lib/store";
+import { formatDateTime } from "@/lib/format";
 import type { RequestStatus } from "@/lib/types";
 
 function toneForStatus(status: RequestStatus) {
@@ -222,7 +223,7 @@ export default function UserProfilePage() {
                               {r.status.replaceAll("_", " ")}
                             </Badge>
                             <span className="text-xs text-zinc-500">
-                              Created: {new Date(r.createdAt).toLocaleString()}
+                              Created: {formatDateTime(r.createdAt)}
                             </span>
                           </div>
                         </div>

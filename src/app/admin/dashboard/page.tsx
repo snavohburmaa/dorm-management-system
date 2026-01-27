@@ -7,6 +7,7 @@ import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Badge } from "@/components/Badge";
 import { useDorm } from "@/lib/store";
+import { formatDateTime } from "@/lib/format";
 import type { RequestStatus } from "@/lib/types";
 
 function toneForStatus(status: RequestStatus) {
@@ -89,7 +90,7 @@ export default function AdminDashboardPage() {
                     <div>
                       <div className="text-sm font-semibold">{r.title}</div>
                       <div className="mt-1 text-xs text-zinc-500">
-                        {new Date(r.createdAt).toLocaleString()}
+                        {formatDateTime(r.createdAt)}
                       </div>
                       <div className="mt-2">
                         <Badge tone={toneForStatus(r.status)}>

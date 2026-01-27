@@ -7,6 +7,7 @@ import { Card, CardBody } from "@/components/Card";
 import { EmptyState } from "@/components/EmptyState";
 import { Textarea } from "@/components/Textarea";
 import { useDorm } from "@/lib/store";
+import { formatDateTime } from "@/lib/format";
 import type { RequestStatus } from "@/lib/types";
 
 function toneForStatus(status: RequestStatus) {
@@ -84,7 +85,7 @@ export default function TechnicianTasksPage() {
                       </Badge>
                       {hasChanges ? <Badge tone="neutral">Not saved</Badge> : null}
                       <span className="text-xs text-zinc-500">
-                        Updated: {new Date(t.updatedAt).toLocaleString()}
+                        Updated: {formatDateTime(t.updatedAt)}
                       </span>
                     </div>
                   </div>
