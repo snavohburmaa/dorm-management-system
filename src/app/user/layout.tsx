@@ -14,6 +14,7 @@ export default function UserLayout({ children }: { children: ReactNode }) {
           <TopTabs
             tabs={[
               { href: "/user/announcements", label: "Announcement" },
+              { href: "/user/requests", label: "Request list" },
               { href: "/user/notifications", label: "Notification" },
               { href: "/user/profile", label: "Profile" },
             ]}

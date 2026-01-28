@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Badge } from "@/components/Badge";
 import { Card, CardBody } from "@/components/Card";
 import { EmptyState } from "@/components/EmptyState";
 import { useDorm } from "@/lib/store";
 import { formatDateTime } from "@/lib/format";
 import type { RequestStatus } from "@/lib/types";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Check } from "lucide-react";
 
 function toneForStatus(status: RequestStatus | string) {
   if (status === "pending") return "warning";
@@ -49,18 +49,17 @@ type ProcessStage = {
 };
 
 function ProcessTimeline({ request }: { request: GroupedNotifications["request"] }) {
-  // Determine current stage
   let currentStageIndex = -1;
   if (request.status === "complete") {
-    currentStageIndex = 3; // Done
+    currentStageIndex = 3;
   } else if (request.status === "in_progress") {
-    currentStageIndex = 2; // Progress
+    currentStageIndex = 2;
   } else if (request.acceptedByTechnician) {
-    currentStageIndex = 2; // Progress (tech accepted, should be in progress soon)
+    currentStageIndex = 2;
   } else if (request.assignedTechnicianId !== null) {
-    currentStageIndex = 1; // Tech (waiting for tech to accept)
+    currentStageIndex = 1;
   } else {
-    currentStageIndex = 0; // Admin (waiting for admin to assign)
+    currentStageIndex = 0;
   }
 
   const stages: ProcessStage[] = [
@@ -87,25 +86,34 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
   ];
 
   return (
-    <div className="mt-4">
-      <div className="flex items-center">
+    <div className="mt-4 rounded-2xl border border-zinc-200 bg-gradient-to-b from-zinc-50 to-zinc-50/50 px-5 py-4">
+      <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+        Request status
+      </div>
+      <div className="flex items-start">
         {stages.map((stage, index) => (
-          <div key={stage.label} className="flex flex-1 items-center">
-            <div className="flex flex-col items-center flex-1">
+          <div key={stage.label} className="flex flex-1 items-start">
+            <div className="flex flex-col items-center">
               <div
-                className={`flex size-8 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
+                className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold shadow-sm transition-all ${
                   stage.completed
                     ? "bg-emerald-500 text-white"
                     : stage.current
-                      ? "bg-blue-500 text-white ring-2 ring-blue-200"
-                      : "bg-zinc-200 text-zinc-500"
+                      ? "bg-blue-500 text-white ring-2 ring-blue-300 ring-offset-2 ring-offset-zinc-50"
+                      : "bg-white text-zinc-400 ring-1 ring-zinc-200"
                 }`}
               >
-                {index + 1}
+                {stage.completed ? (
+                  <Check className="size-5" strokeWidth={2.5} />
+                ) : (
+                  index + 1
+                )}
               </div>
               <div
-                className={`mt-1.5 text-xs font-medium ${
-                  stage.completed || stage.current ? "text-zinc-900" : "text-zinc-500"
+                className={`mt-2 text-center text-xs font-medium ${
+                  stage.completed || stage.current
+                    ? "text-zinc-900"
+                    : "text-zinc-400"
                 }`}
               >
                 {stage.label}
@@ -113,8 +121,8 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
             </div>
             {index < stages.length - 1 && (
               <div
-                className={`mx-1 h-0.5 flex-1 ${
-                  stage.completed ? "bg-emerald-500" : "bg-zinc-200"
+                className={`relative top-5 mx-1 h-1 flex-1 self-start rounded-full ${
+                  stage.completed ? "bg-emerald-400" : "bg-zinc-200"
                 }`}
               />
             )}
@@ -128,7 +136,6 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
 export default function UserNotificationsPage() {
   const { session, notifications, requests, technicians } = useDorm();
   const userId = session?.role === "user" ? session.id : null;
-  const [expandedRequests, setExpandedRequests] = useState<Set<string>>(new Set());
 
   const grouped = useMemo<GroupedNotifications[]>(() => {
     if (!userId) return [];
@@ -202,18 +209,6 @@ export default function UserNotificationsPage() {
     );
   }, [userId, notifications, requests, technicians]);
 
-  const toggleRequest = (requestId: string) => {
-    setExpandedRequests((prev) => {
-      const next = new Set(prev);
-      if (next.has(requestId)) {
-        next.delete(requestId);
-      } else {
-        next.add(requestId);
-      }
-      return next;
-    });
-  };
-
   return (
     <div className="space-y-6">
       <Card>
@@ -231,91 +226,49 @@ export default function UserNotificationsPage() {
       ) : (
         <div className="space-y-4">
           {grouped.map((group) => {
-            const isExpanded = expandedRequests.has(group.requestId);
             const notificationCount = group.notifications.length;
 
             return (
               <Card key={group.requestId}>
                 <CardBody>
-                  <button
-                    onClick={() => toggleRequest(group.requestId)}
-                    className="w-full text-left"
-                    type="button"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <div className="text-lg font-semibold">{group.request.title}</div>
-                          <Badge tone={toneForStatus(group.request.status)}>
-                            {group.request.status.replaceAll("_", " ")}
-                          </Badge>
-                          {notificationCount > 1 && (
-                            <Badge tone="neutral" className="text-xs">
-                              {notificationCount} updates
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="mt-2 text-sm text-zinc-700">
-                          {group.latestNotification.message}
-                        </div>
-                        {group.technician && (
-                          <div className="mt-2 text-xs text-zinc-500">
-                            Technician: {group.technician.name}
-                            {group.technician.phone ? ` (${group.technician.phone})` : ""}
-                          </div>
-                        )}
-                        <div className="mt-2 text-xs text-zinc-500">
-                          Latest: {formatDateTime(group.latestNotification.createdAt)}
-                        </div>
-                        <div className="mt-3 rounded-xl border-2 border-zinc-200 bg-zinc-50 p-3">
-                          <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                            Tech&apos;s note
-                          </div>
-                          <div className="mt-2 min-h-[2.5rem] text-sm text-zinc-800">
-                            {group.request.technicianNotes.trim()
-                              ? group.request.technicianNotes
-                              : "—"}
-                          </div>
-                        </div>
-                        <ProcessTimeline request={group.request} />
-                      </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        {isExpanded ? (
-                          <ChevronUp className="size-5 text-zinc-500" />
-                        ) : (
-                          <ChevronDown className="size-5 text-zinc-500" />
+                        <div className="text-lg font-semibold">{group.request.title}</div>
+                        <Badge tone={toneForStatus(group.request.status)}>
+                          {group.request.status.replaceAll("_", " ")}
+                        </Badge>
+                        {notificationCount > 1 && (
+                          <Badge tone="neutral" className="text-xs">
+                            {notificationCount} updates
+                          </Badge>
                         )}
                       </div>
-                    </div>
-                  </button>
-
-                  {isExpanded && (
-                    <div className="mt-4 border-t border-zinc-200 pt-4">
-                      <div className="mb-3 text-sm font-semibold text-zinc-700">
-                        All notifications for this request ({notificationCount})
+                      <div className="mt-2 text-sm text-zinc-700">
+                        {group.latestNotification.message}
                       </div>
-                      <div className="space-y-3">
-                        {group.notifications.map((notif) => (
-                          <div
-                            key={notif.id}
-                            className="rounded-xl border border-zinc-200 bg-zinc-50 p-3"
-                          >
-                            <div className="flex items-start justify-between gap-4">
-                              <div className="flex-1">
-                                <div className="text-sm font-semibold">{notif.title}</div>
-                                <div className="mt-1 text-sm text-zinc-700">
-                                  {notif.message}
-                                </div>
-                              </div>
-                              <div className="text-xs font-semibold text-zinc-500">
-                                {formatDateTime(notif.createdAt)}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                      {group.technician && (
+                        <div className="mt-2 text-xs text-zinc-500">
+                          Technician: {group.technician.name}
+                          {group.technician.phone ? ` (${group.technician.phone})` : ""}
+                        </div>
+                      )}
+                      <div className="mt-2 text-xs text-zinc-500">
+                        Latest: {formatDateTime(group.latestNotification.createdAt)}
                       </div>
+                      <div className="mt-3 rounded-xl border-2 border-zinc-200 bg-zinc-50 p-3">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                          Tech&apos;s note
+                        </div>
+                        <div className="mt-2 min-h-[2.5rem] text-sm text-zinc-800">
+                          {group.request.technicianNotes.trim()
+                            ? group.request.technicianNotes
+                            : "—"}
+                        </div>
+                      </div>
+                      <ProcessTimeline request={group.request} />
                     </div>
-                  )}
+                  </div>
                 </CardBody>
               </Card>
             );

@@ -8,8 +8,8 @@ import type {
 } from "@/lib/types";
 
 export const ADMIN_CREDENTIALS = {
-  email: "admin@dorm.local",
-  password: "admin123",
+  email: "a1",
+  password: "123",
 } as const;
 
 export type SeedData = {
@@ -35,35 +35,27 @@ export function createSeedData(): SeedData {
   const demoUser: UserProfile = {
     id: id("usr"),
     role: "user",
-    name: "Demo User",
+    name: "u1",
     phone: "+95 9 000 000 000",
     building: "A",
     floor: "2",
     room: "204",
-    email: "user@dorm.local",
-    password: "user123",
+    email: "u1",
+    password: "123",
     createdAt,
   };
 
   const demoTech: TechnicianProfile = {
     id: id("tech"),
     role: "technician",
-    name: "Demo Technician",
+    name: "t1",
     phone: "+95 9 111 111 111",
-    email: "tech@dorm.local",
-    password: "tech123",
+    email: "t1",
+    password: "123",
     createdAt,
   };
 
-  const announcements: Announcement[] = [
-    {
-      id: id("ann"),
-      title: "Welcome to Dorm Management",
-      body: "Admins can post announcements here. Users can read them like a post feed.",
-      createdAt,
-      createdBy: "admin",
-    },
-  ];
+  const announcements: Announcement[] = [];
 
   const requests: MaintenanceRequest[] = [
     {
@@ -72,8 +64,10 @@ export function createSeedData(): SeedData {
       title: "Water leak in bathroom",
       description: "There is a leak under the sink. Please check.",
       status: "pending",
+      priority: "medium",
       assignedTechnicianId: null,
       acceptedByTechnician: false,
+      declinedByTechnicianIds: [],
       technicianNotes: "",
       createdAt,
       updatedAt: createdAt,

@@ -107,15 +107,6 @@ export default function UserRequestsPage() {
           )}
         </CardBody>
       </Card>
-
-      <div className="flex justify-start">
-        <Link
-          href="/user/announcements"
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-semibold text-zinc-700 hover:bg-zinc-100"
-        >
-          ← Back to Announcements
-        </Link>
-      </div>
     </div>
   );
 }

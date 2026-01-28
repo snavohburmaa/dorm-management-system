@@ -64,8 +64,8 @@ export default function Home() {
         </div>
 
         <div className="text-xs text-zinc-500">
-          Demo credentials: user `user@dorm.local` / `user123`, technician
-          `tech@dorm.local` / `tech123`, admin `admin@dorm.local` / `admin123`.
+          Demo credentials: user `u1` / `123`, technician
+          `t1` / `123`, admin `a1` / `123`.
         </div>
       </main>
     </div>

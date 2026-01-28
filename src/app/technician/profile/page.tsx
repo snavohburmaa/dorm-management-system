@@ -14,6 +14,7 @@ export default function TechnicianProfilePage() {
     return dorm.technicians.find((t) => t.id === dorm.session?.id) ?? null;
   }, [dorm.session, dorm.technicians]);
 
+  const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(tech?.name ?? "");
   const [phone, setPhone] = useState(tech?.phone ?? "");
   const [saved, setSaved] = useState(false);
@@ -27,58 +28,77 @@ export default function TechnicianProfilePage() {
   function saveProfile() {
     dorm.updateTechnicianProfile({ name, phone });
     setSaved(true);
+    setIsEditing(false);
     window.setTimeout(() => setSaved(false), 1200);
+  }
+
+  function cancelEdit() {
+    if (!tech) return;
+    setName(tech.name ?? "");
+    setPhone(tech.phone ?? "");
+    setIsEditing(false);
   }
 
   return (
     <div className="space-y-6">
       <Card>
         <CardBody>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
               <p className="mt-2 text-sm text-zinc-600">
-                Edit your details and log out. (Technicians cannot create issues.)
+                Log out. (Technicians cannot create issues.)
               </p>
             </div>
-            {saved ? <Badge tone="success">Saved</Badge> : null}
+            <div className="flex items-center gap-2">
+              {saved ? <Badge tone="success">Saved</Badge> : null}
+              {!isEditing ? (
+                <Button onClick={() => setIsEditing(true)} type="button" size="sm">
+                  Edit your profile
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button onClick={cancelEdit} type="button" variant="secondary" size="sm">
+                    Cancel
+                  </Button>
+                  <Button onClick={saveProfile} type="button" size="sm">
+                    Save
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="mt-5 grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 sm:grid-cols-2">
             <div>
               <div className="text-xs font-semibold text-zinc-600">Name</div>
-              <div className="mt-1 text-sm font-semibold text-zinc-900">
-                {tech?.name || "—"}
-              </div>
+              {isEditing ? (
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1"
+                />
+              ) : (
+                <div className="mt-1 text-sm font-semibold text-zinc-900">
+                  {tech?.name || "—"}
+                </div>
+              )}
             </div>
             <div>
               <div className="text-xs font-semibold text-zinc-600">Phone</div>
-              <div className="mt-1 text-sm font-semibold text-zinc-900">
-                {tech?.phone || "—"}
-              </div>
+              {isEditing ? (
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="mt-1"
+                />
+              ) : (
+                <div className="mt-1 text-sm font-semibold text-zinc-900">
+                  {tech?.phone || "—"}
+                </div>
+              )}
             </div>
           </div>
-        </CardBody>
-      </Card>
-
-      <Card>
-        <CardBody className="space-y-4">
-          <div className="text-sm font-semibold">Your details</div>
-
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Name</div>
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Phone</div>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-          </div>
-
-          <Button onClick={saveProfile} type="button">
-            Save profile
-          </Button>
         </CardBody>
       </Card>
 

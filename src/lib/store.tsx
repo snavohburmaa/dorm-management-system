@@ -5,6 +5,7 @@ import type {
   Announcement,
   MaintenanceRequest,
   NotificationItem,
+  RequestPriority,
   RequestStatus,
   Session,
   TechnicianProfile,
@@ -50,10 +51,13 @@ type DormActions = {
 
   createRequest(payload: { title: string; description: string }): { ok: true } | { ok: false; error: string };
   assignTechnician(payload: { requestId: string; technicianId: string | null }): void;
+  setRequestPriority(payload: { requestId: string; priority: RequestPriority }): void;
   technicianAccept(payload: { requestId: string }): void;
+  technicianDecline(payload: { requestId: string }): void;
   technicianUpdate(payload: { requestId: string; status: RequestStatus; technicianNotes: string }): void;
 
   addAnnouncement(payload: { title: string; body: string }): void;
+  updateAnnouncement(payload: { announcementId: string; title: string; body: string }): void;
 };
 
 type DormStore = DormState & DormActions;
@@ -235,8 +239,10 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
         title,
         description,
         status: "pending",
+        priority: "medium",
         assignedTechnicianId: null,
         acceptedByTechnician: false,
+        declinedByTechnicianIds: [],
         technicianNotes: "",
         createdAt,
         updatedAt: createdAt,
@@ -270,10 +276,13 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
       setAndPersist((prev) => {
         const req = prev.requests.find((r) => r.id === requestId);
         if (!req) return prev;
+        if (req.acceptedByTechnician) return prev;
 
         const updated: MaintenanceRequest = {
           ...req,
           assignedTechnicianId: technicianId,
+          acceptedByTechnician: false,
+          declinedByTechnicianIds: req.declinedByTechnicianIds ?? [],
           updatedAt: createdAt,
         };
 
@@ -296,6 +305,20 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
           notifications,
         };
       });
+    },
+    [setAndPersist, state.session],
+  );
+
+  const setRequestPriority = useCallback<DormActions["setRequestPriority"]>(
+    ({ requestId, priority }) => {
+      if (state.session?.role !== "admin") return;
+      const now = nowIso();
+      setAndPersist((prev) => ({
+        ...prev,
+        requests: prev.requests.map((r) =>
+          r.id === requestId ? { ...r, priority, updatedAt: now } : r
+        ),
+      }));
     },
     [setAndPersist, state.session],
   );
@@ -327,6 +350,46 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
           message: tech
             ? `${tech.name} accepted your request. Phone: ${tech.phone || "—"}`
             : "A technician accepted your request.",
+          createdAt,
+        };
+
+        return {
+          ...prev,
+          requests: prev.requests.map((r) => (r.id === requestId ? updated : r)),
+          notifications: [noti, ...prev.notifications],
+        };
+      });
+    },
+    [setAndPersist, state.session],
+  );
+
+  const technicianDecline = useCallback<DormActions["technicianDecline"]>(
+    ({ requestId }) => {
+      if (state.session?.role !== "technician") return;
+      const techId = state.session.id;
+      const createdAt = nowIso();
+
+      setAndPersist((prev) => {
+        const req = prev.requests.find((r) => r.id === requestId);
+        if (!req) return prev;
+        if (req.assignedTechnicianId !== techId) return prev;
+
+        const declinedIds = [...(req.declinedByTechnicianIds ?? []), techId];
+        const updated: MaintenanceRequest = {
+          ...req,
+          assignedTechnicianId: null,
+          acceptedByTechnician: false,
+          declinedByTechnicianIds: declinedIds,
+          updatedAt: createdAt,
+        };
+
+        const noti: NotificationItem = {
+          id: id("noti"),
+          userId: updated.userId,
+          requestId: updated.id,
+          type: "assigned",
+          title: "Technician declined",
+          message: "The assigned technician declined. Admin may assign another.",
           createdAt,
         };
 
@@ -399,6 +462,25 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
     [setAndPersist, state.session],
   );
 
+  const updateAnnouncement = useCallback<DormActions["updateAnnouncement"]>(
+    ({ announcementId, title, body }) => {
+      if (state.session?.role !== "admin") return;
+      const trimmedTitle = title.trim();
+      const trimmedBody = body.trim();
+      if (!trimmedTitle || !trimmedBody) return;
+
+      setAndPersist((prev) => ({
+        ...prev,
+        announcements: prev.announcements.map((a) =>
+          a.id === announcementId
+            ? { ...a, title: trimmedTitle, body: trimmedBody }
+            : a
+        ),
+      }));
+    },
+    [setAndPersist, state.session],
+  );
+
   const value: DormStore = useMemo(
     () => ({
       ...state,
@@ -412,14 +494,19 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
       updateTechnicianProfile,
       createRequest,
       assignTechnician,
+      setRequestPriority,
       technicianAccept,
+      technicianDecline,
       technicianUpdate,
       addAnnouncement,
+      updateAnnouncement,
     }),
     [
       addAnnouncement,
+      updateAnnouncement,
       assignTechnician,
       createRequest,
+      setRequestPriority,
       loginAdmin,
       loginTechnician,
       loginUser,
@@ -428,6 +515,7 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
       registerUser,
       state,
       technicianAccept,
+      technicianDecline,
       technicianUpdate,
       updateTechnicianProfile,
       updateUserProfile,

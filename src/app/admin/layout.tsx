@@ -28,9 +28,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </Link>
             <Link
               className="rounded-full px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
-              href="/"
+              href="/admin/requests"
             >
-              Role select
+              Requests
+            </Link>
+            <Link
+              className="rounded-full px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
+              href="/admin/history"
+            >
+              History
             </Link>
             <AdminActions />
           </nav>

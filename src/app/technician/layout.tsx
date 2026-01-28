@@ -14,6 +14,7 @@ export default function TechnicianLayout({ children }: { children: ReactNode }) 
           <TopTabs
             tabs={[
               { href: "/technician/tasks", label: "Tasks" },
+              { href: "/technician/history", label: "History" },
               { href: "/technician/profile", label: "Profile" },
             ]}
           />

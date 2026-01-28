@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/Button";
 import { Card, CardBody } from "@/components/Card";
@@ -9,17 +10,45 @@ import { Badge } from "@/components/Badge";
 import { useDorm } from "@/lib/store";
 import { formatDateTime } from "@/lib/format";
 import type { RequestStatus } from "@/lib/types";
-
-function toneForStatus(status: RequestStatus) {
-  if (status === "pending") return "warning";
-  if (status === "in_progress") return "info";
-  return "success";
-}
+import { X } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const dorm = useDorm();
   const [annTitle, setAnnTitle] = useState("");
   const [annBody, setAnnBody] = useState("");
+  const [selectedAnnouncementId, setSelectedAnnouncementId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+
+  const selectedAnnouncement = useMemo(() => {
+    if (!selectedAnnouncementId) return null;
+    return dorm.announcements.find((a) => a.id === selectedAnnouncementId) ?? null;
+  }, [dorm.announcements, selectedAnnouncementId]);
+
+  const openEditModal = (id: string) => {
+    const ann = dorm.announcements.find((a) => a.id === id);
+    if (ann) {
+      setSelectedAnnouncementId(id);
+      setEditTitle(ann.title);
+      setEditBody(ann.body);
+    }
+  };
+
+  const closeEditModal = () => {
+    setSelectedAnnouncementId(null);
+    setEditTitle("");
+    setEditBody("");
+  };
+
+  const saveAnnouncement = () => {
+    if (!selectedAnnouncementId || !editTitle.trim() || !editBody.trim()) return;
+    dorm.updateAnnouncement({
+      announcementId: selectedAnnouncementId,
+      title: editTitle,
+      body: editBody,
+    });
+    closeEditModal();
+  };
 
   const report = useMemo(() => {
     const byStatus = dorm.requests.reduce<Record<RequestStatus, number>>(
@@ -29,101 +58,40 @@ export default function AdminDashboardPage() {
       },
       { pending: 0, in_progress: 0, complete: 0 },
     );
-
-    const byYear = dorm.requests.reduce<Record<string, number>>((acc, r) => {
-      const y = new Date(r.createdAt).getFullYear().toString();
-      acc[y] = (acc[y] ?? 0) + 1;
-      return acc;
-    }, {});
-
-    return { byStatus, byYear };
+    return { byStatus };
   }, [dorm.requests]);
 
   return (
     <div className="space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Dorm Control Center
+          </h1>
           <p className="mt-2 text-sm text-zinc-600">
-            Manage users, maintenance requests, technician assignments, reports,
-            and announcements.
+            Manage residents and technicians,
+            track maintenance requests, post updates, 
+            and keep every room safe and comfortable.
           </p>
         </CardBody>
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardBody className="space-y-3">
-            <div className="text-sm font-semibold">Users</div>
-            <div className="text-sm text-zinc-600">
-              {dorm.users.length} users, {dorm.technicians.length} technicians
-            </div>
-            <div className="divide-y divide-zinc-100 rounded-2xl border border-zinc-100">
-              {dorm.users.slice(0, 5).map((u) => (
-                <div key={u.id} className="flex items-center justify-between px-4 py-3">
-                  <div>
-                    <div className="text-sm font-semibold">{u.name}</div>
-                    <div className="text-xs text-zinc-500">{u.email}</div>
-                  </div>
-                  <div className="text-xs text-zinc-500">
-                    {u.building}-{u.floor}-{u.room}
-                  </div>
-                </div>
-              ))}
-              {dorm.users.length === 0 ? (
-                <div className="px-4 py-3 text-sm text-zinc-600">No users yet.</div>
-              ) : null}
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardBody className="space-y-3">
-            <div className="text-sm font-semibold">Maintenance requests</div>
-            <div className="text-sm text-zinc-600">
-              Assign technicians to requests.
-            </div>
-            <div className="space-y-3">
-              {dorm.requests.slice(0, 6).map((r) => (
-                <div key={r.id} className="rounded-2xl border border-zinc-200 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold">{r.title}</div>
-                      <div className="mt-1 text-xs text-zinc-500">
-                        {formatDateTime(r.createdAt)}
-                      </div>
-                      <div className="mt-2">
-                        <Badge tone={toneForStatus(r.status)}>
-                          {r.status.replaceAll("_", " ")}
-                        </Badge>
-                      </div>
-                    </div>
-                    <select
-                      className="h-10 rounded-2xl border border-zinc-200 bg-white px-3 text-sm font-semibold"
-                      value={r.assignedTechnicianId ?? ""}
-                      onChange={(e) =>
-                        dorm.assignTechnician({
-                          requestId: r.id,
-                          technicianId: e.target.value || null,
-                        })
-                      }
-                    >
-                      <option value="">Unassigned</option>
-                      {dorm.technicians.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              ))}
-              {dorm.requests.length === 0 ? (
-                <div className="text-sm text-zinc-600">No requests yet.</div>
-              ) : null}
-            </div>
-          </CardBody>
-        </Card>
+        <Link href="/admin/users" className="block">
+          <Card className="transition-colors hover:border-zinc-300 hover:bg-zinc-50/50">
+            <CardBody className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-semibold">Users and Technicians</div>
+                <span className="text-xs font-medium text-zinc-500">
+                  View all →
+                </span>
+              </div>
+              <div className="text-sm text-zinc-600">
+                {dorm.users.length} users, {dorm.technicians.length} technicians
+              </div>
+            </CardBody>
+          </Card>
+        </Link>
 
         <Card>
           <CardBody className="space-y-3">
@@ -132,21 +100,6 @@ export default function AdminDashboardPage() {
               <Badge tone="warning">Pending: {report.byStatus.pending}</Badge>
               <Badge tone="info">In progress: {report.byStatus.in_progress}</Badge>
               <Badge tone="success">Complete: {report.byStatus.complete}</Badge>
-            </div>
-            <div className="mt-2 rounded-2xl border border-zinc-200 p-4">
-              <div className="text-xs font-semibold text-zinc-600">Yearly</div>
-              <div className="mt-2 space-y-1 text-sm">
-                {Object.keys(report.byYear).length === 0 ? (
-                  <div className="text-sm text-zinc-600">No data yet.</div>
-                ) : (
-                  Object.entries(report.byYear).map(([year, count]) => (
-                    <div key={year} className="flex items-center justify-between">
-                      <span className="text-zinc-700">{year}</span>
-                      <span className="font-semibold">{count}</span>
-                    </div>
-                  ))
-                )}
-              </div>
             </div>
           </CardBody>
         </Card>
@@ -174,7 +127,110 @@ export default function AdminDashboardPage() {
             </Button>
           </CardBody>
         </Card>
+
+        <Card>
+          <CardBody className="space-y-3">
+            <div className="text-sm font-semibold">Announcement history</div>
+            <div className="text-sm text-zinc-600">
+              Click an announcement to view and edit.
+            </div>
+            <div className="max-h-64 space-y-2 overflow-y-auto rounded-2xl border border-zinc-200">
+              {dorm.announcements.length === 0 ? (
+                <div className="px-4 py-6 text-center text-sm text-zinc-500">
+                  No announcements yet.
+                </div>
+              ) : (
+                dorm.announcements.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => openEditModal(a.id)}
+                    className="w-full border-b border-zinc-100 px-4 py-3 text-left last:border-b-0 hover:bg-zinc-50"
+                  >
+                    <div className="text-sm font-semibold text-zinc-900">{a.title}</div>
+                    <div className="mt-0.5 text-xs text-zinc-500">
+                      {formatDateTime(a.createdAt)}
+                    </div>
+                    <span className="mt-1 inline-block text-xs font-medium text-zinc-500">
+                      View / Edit →
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          </CardBody>
+        </Card>
       </div>
+
+      {selectedAnnouncement && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="announcement-edit-title"
+          onClick={closeEditModal}
+        >
+          <div
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Card className="w-full">
+              <CardBody className="space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <h2 id="announcement-edit-title" className="text-lg font-semibold">
+                    View / Edit announcement
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={closeEditModal}
+                    className="rounded-full p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                    aria-label="Close"
+                  >
+                    <X className="size-5" />
+                  </button>
+                </div>
+
+                <div className="text-xs text-zinc-500">
+                  Posted: {formatDateTime(selectedAnnouncement.createdAt)}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-zinc-600">Title</div>
+                  <Input
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    placeholder="Announcement title"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-zinc-600">Body</div>
+                  <Textarea
+                    value={editBody}
+                    onChange={(e) => setEditBody(e.target.value)}
+                    placeholder="Write announcement..."
+                    className="min-h-[120px]"
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <Button type="button" onClick={saveAnnouncement} className="flex-1">
+                    Save changes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={closeEditModal}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -2,6 +2,8 @@ export type Role = "user" | "technician" | "admin";
 
 export type RequestStatus = "pending" | "in_progress" | "complete";
 
+export type RequestPriority = "urgent" | "medium" | "low" | "enhancement";
+
 export type Session =
   | {
       role: Role;
@@ -46,8 +48,11 @@ export type MaintenanceRequest = {
   title: string;
   description: string;
   status: RequestStatus;
+  priority: RequestPriority;
   assignedTechnicianId: string | null;
   acceptedByTechnician: boolean;
+  /** Technician IDs who declined this request (so admin can see and reassign) */
+  declinedByTechnicianIds: string[];
   technicianNotes: string;
   createdAt: string;
   updatedAt: string;
