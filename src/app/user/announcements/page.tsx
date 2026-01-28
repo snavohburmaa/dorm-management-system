@@ -15,10 +15,10 @@ export default function UserAnnouncementsPage() {
   }, [session, users]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">Announcements</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Announcements</h1>
           <p className="mt-2 text-sm text-zinc-600">
             You will see announcements posted by the admin here.
           </p>
@@ -32,12 +32,12 @@ export default function UserAnnouncementsPage() {
           {announcements.map((a) => (
             <Card key={a.id}>
               <CardBody>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-lg font-semibold">{a.title}</div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-base font-semibold sm:text-lg">{a.title}</div>
                     <div className="mt-2 text-sm text-zinc-600">{a.body}</div>
                   </div>
-                  <div className="text-xs font-semibold text-zinc-500">
+                  <div className="shrink-0 text-xs font-semibold text-zinc-500">
                     {formatDateTime(a.createdAt)}
                   </div>
                 </div>

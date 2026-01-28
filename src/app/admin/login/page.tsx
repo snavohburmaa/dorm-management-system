@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-dvh bg-zinc-50 text-zinc-950">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-5 py-10">
+      <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-8 sm:px-5 sm:py-10">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-sm font-semibold text-zinc-700 hover:text-zinc-950">
             ← Back

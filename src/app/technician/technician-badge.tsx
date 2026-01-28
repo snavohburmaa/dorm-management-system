@@ -23,13 +23,13 @@ export function TechnicianBadge() {
   const sub = tech?.phone?.trim() ? `Phone: ${tech.phone}` : "Tasks & status";
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="grid size-10 place-items-center rounded-2xl bg-zinc-950 text-sm font-semibold text-white">
+    <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+      <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-zinc-950 text-xs font-semibold text-white sm:size-10 sm:rounded-2xl sm:text-sm">
         {initials(label)}
       </div>
-      <div>
-        <div className="text-sm font-semibold leading-5">{label}</div>
-        <div className="text-xs text-zinc-500">{sub}</div>
+      <div className="min-w-0">
+        <div className="truncate text-sm font-semibold leading-5">{label}</div>
+        <div className="truncate text-xs text-zinc-500">{sub}</div>
       </div>
     </div>
   );

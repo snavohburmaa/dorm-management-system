@@ -49,10 +49,10 @@ export default function AdminUsersPage() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
             Users & Technicians
           </h1>
           <p className="mt-2 text-sm text-zinc-600">
@@ -61,7 +61,7 @@ export default function AdminUsersPage() {
         </CardBody>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Users Column */}
         <Card>
           <CardBody className="space-y-4">
@@ -161,7 +161,7 @@ export default function AdminUsersPage() {
       {/* User Detail Modal */}
       {selectedUser && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
           role="dialog"
           aria-modal="true"
           onClick={() => setSelectedUserId(null)}
@@ -257,7 +257,7 @@ export default function AdminUsersPage() {
       {/* Technician Detail Modal */}
       {selectedTech && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
           role="dialog"
           aria-modal="true"
           onClick={() => setSelectedTechId(null)}

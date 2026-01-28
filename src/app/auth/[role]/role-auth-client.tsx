@@ -73,12 +73,12 @@ export function RoleAuthClient({
 
   return (
     <div className="min-h-dvh bg-zinc-50 text-zinc-950">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-5 py-10">
-        <div className="flex items-center justify-between">
+      <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-8 sm:px-5 sm:py-10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/" className="text-sm font-semibold text-zinc-700 hover:text-zinc-950">
             ← Back
           </Link>
-          <div className="inline-flex rounded-2xl bg-white p-1 shadow-sm ring-1 ring-zinc-200">
+          <div className="inline-flex w-full justify-center rounded-2xl bg-white p-1 shadow-sm ring-1 ring-zinc-200 sm:w-auto">
             <button
               className={`rounded-2xl px-3 py-2 text-sm font-semibold ${
                 mode === "login" ? "bg-zinc-950 text-white" : "text-zinc-700 hover:bg-zinc-100"

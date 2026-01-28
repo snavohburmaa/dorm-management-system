@@ -86,16 +86,16 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
   ];
 
   return (
-    <div className="mt-4 rounded-2xl border border-zinc-200 bg-gradient-to-b from-zinc-50 to-zinc-50/50 px-5 py-4">
+    <div className="mt-4 overflow-x-auto rounded-2xl border border-zinc-200 bg-gradient-to-b from-zinc-50 to-zinc-50/50 px-4 py-4 sm:px-5">
       <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
         Request status
       </div>
-      <div className="flex items-start">
+      <div className="flex min-w-max items-start sm:min-w-0">
         {stages.map((stage, index) => (
           <div key={stage.label} className="flex flex-1 items-start">
             <div className="flex flex-col items-center">
               <div
-                className={`flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold shadow-sm transition-all ${
+                className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold shadow-sm transition-all sm:size-10 sm:text-sm ${
                   stage.completed
                     ? "bg-emerald-500 text-white"
                     : stage.current
@@ -104,13 +104,13 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
                 }`}
               >
                 {stage.completed ? (
-                  <Check className="size-5" strokeWidth={2.5} />
+                  <Check className="size-3.5 sm:size-5" strokeWidth={2.5} />
                 ) : (
                   index + 1
                 )}
               </div>
               <div
-                className={`mt-2 text-center text-xs font-medium ${
+                className={`mt-1.5 text-center text-[10px] font-medium sm:mt-2 sm:text-xs ${
                   stage.completed || stage.current
                     ? "text-zinc-900"
                     : "text-zinc-400"
@@ -121,7 +121,7 @@ function ProcessTimeline({ request }: { request: GroupedNotifications["request"]
             </div>
             {index < stages.length - 1 && (
               <div
-                className={`relative top-5 mx-1 h-1 flex-1 self-start rounded-full ${
+                className={`relative top-4 mx-0.5 h-1 flex-1 self-start rounded-full sm:top-5 sm:mx-1 ${
                   stage.completed ? "bg-emerald-400" : "bg-zinc-200"
                 }`}
               />
@@ -210,10 +210,10 @@ export default function UserNotificationsPage() {
   }, [userId, notifications, requests, technicians]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">Notifications</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Notifications</h1>
           <p className="mt-2 text-sm text-zinc-600">
             Technician updates (pending / in progress / complete) will appear
             here.
@@ -231,10 +231,10 @@ export default function UserNotificationsPage() {
             return (
               <Card key={group.requestId}>
                 <CardBody>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <div className="text-lg font-semibold">{group.request.title}</div>
+                  <div className="flex flex-col gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <div className="text-base font-semibold sm:text-lg">{group.request.title}</div>
                         <Badge tone={toneForStatus(group.request.status)}>
                           {group.request.status.replaceAll("_", " ")}
                         </Badge>

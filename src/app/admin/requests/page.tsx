@@ -62,10 +62,10 @@ export default function AdminRequestsPage() {
   }, [activeRequests, dorm.requests]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
             Maintenance Requests
           </h1>
           <p className="mt-2 text-sm text-zinc-600">
@@ -76,11 +76,11 @@ export default function AdminRequestsPage() {
 
       <Card>
         <CardBody className="space-y-4">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={() => setFilter("all")}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 filter === "all"
                   ? "bg-zinc-900 text-white"
                   : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
@@ -91,7 +91,7 @@ export default function AdminRequestsPage() {
             <button
               type="button"
               onClick={() => setFilter("pending")}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 filter === "pending"
                   ? "bg-yellow-500 text-white"
                   : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
@@ -102,7 +102,7 @@ export default function AdminRequestsPage() {
             <button
               type="button"
               onClick={() => setFilter("in_progress")}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 filter === "in_progress"
                   ? "bg-blue-500 text-white"
                   : "bg-blue-100 text-blue-800 hover:bg-blue-200"
@@ -186,7 +186,7 @@ export default function AdminRequestsPage() {
 
       {selectedRequest && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="request-detail-title"

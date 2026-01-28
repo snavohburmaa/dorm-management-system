@@ -10,7 +10,7 @@ export function AdminActions() {
 
   return (
     <button
-      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold hover:bg-zinc-100"
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold hover:bg-zinc-100 sm:gap-2 sm:px-4"
       type="button"
       onClick={() => {
         logout();

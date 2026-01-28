@@ -66,10 +66,10 @@ export default function TechnicianTasksPage() {
   }, [tasks]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">Assigned tasks</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Assigned tasks</h1>
           <p className="mt-2 text-sm text-zinc-600">
             Accept tasks, update status (pending → in progress → complete), and add
             repair notes. Notes are sent to admin when you submit. Completed tasks
@@ -93,9 +93,9 @@ export default function TechnicianTasksPage() {
             return (
             <Card key={t.id}>
               <CardBody className="space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-lg font-semibold">{t.title}</div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-base font-semibold sm:text-lg">{t.title}</div>
                     <div className="mt-2 text-sm text-zinc-700">
                       {t.description}
                     </div>
@@ -112,7 +112,7 @@ export default function TechnicianTasksPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end gap-3">
+                  <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:items-end">
                     <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-left">
                       <div className="text-xs font-semibold text-zinc-500">
                         User details
@@ -137,7 +137,7 @@ export default function TechnicianTasksPage() {
                       </div>
                     </div>
                     {!t.acceptedByTechnician ? (
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 sm:items-end">
                         <Button
                           onClick={() => dorm.technicianAccept({ requestId: t.id })}
                           type="button"

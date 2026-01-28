@@ -13,7 +13,7 @@ export function TopTabs({ tabs }: { tabs: TopTab[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-2">
+    <nav className="-mb-1 flex flex-shrink-0 items-center justify-end gap-1 sm:gap-2">
       {tabs.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
         return (
@@ -21,7 +21,7 @@ export function TopTabs({ tabs }: { tabs: TopTab[] }) {
             key={t.href}
             href={t.href}
             className={cn(
-              "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+              "whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:px-4",
               active ? "bg-zinc-950 text-white" : "hover:bg-zinc-100",
             )}
             aria-current={active ? "page" : undefined}

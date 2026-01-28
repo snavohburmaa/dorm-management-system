@@ -49,10 +49,10 @@ export default function AdminHistoryPage() {
   }, [dorm.technicians, selectedRequest]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
             Request History
           </h1>
           <p className="mt-2 text-sm text-zinc-600">
@@ -118,7 +118,7 @@ export default function AdminHistoryPage() {
 
       {selectedRequest && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="history-detail-title"

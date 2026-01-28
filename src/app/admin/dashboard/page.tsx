@@ -62,10 +62,10 @@ export default function AdminDashboardPage() {
   }, [dorm.requests]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
             Dorm Control Center
           </h1>
           <p className="mt-2 text-sm text-zinc-600">
@@ -76,7 +76,7 @@ export default function AdminDashboardPage() {
         </CardBody>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
         <Link href="/admin/users" className="block">
           <Card className="transition-colors hover:border-zinc-300 hover:bg-zinc-50/50">
             <CardBody className="space-y-3">
@@ -164,7 +164,7 @@ export default function AdminDashboardPage() {
 
       {selectedAnnouncement && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="announcement-edit-title"

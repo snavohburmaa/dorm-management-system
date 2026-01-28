@@ -24,10 +24,10 @@ export default function TechnicianHistoryPage() {
   }, [dorm.requests, techId]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
         <CardBody>
-          <h1 className="text-2xl font-semibold tracking-tight">History</h1>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">History</h1>
           <p className="mt-2 text-sm text-zinc-600">
             Tasks you marked complete. Your repair notes were sent to admin.
           </p>
@@ -46,9 +46,9 @@ export default function TechnicianHistoryPage() {
             return (
               <Card key={t.id}>
                 <CardBody className="space-y-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="text-lg font-semibold">{t.title}</div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-base font-semibold sm:text-lg">{t.title}</div>
                       <div className="mt-2 text-sm text-zinc-700">
                         {t.description}
                       </div>
@@ -59,7 +59,7 @@ export default function TechnicianHistoryPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="shrink-0 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-left">
+                    <div className="w-full shrink-0 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-left sm:w-auto">
                       <div className="text-xs font-semibold text-zinc-500">
                         User details
                       </div>

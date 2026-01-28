@@ -8,21 +8,23 @@ export default function UserLayout({ children }: { children: ReactNode }) {
     <div className="min-h-dvh bg-zinc-50 text-zinc-950">
       <RoleGuard role="user" />
       <header className="sticky top-0 z-10 border-b border-zinc-200/70 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-5 py-4">
+        <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-5 sm:py-4">
           <UserBadge />
 
-          <TopTabs
-            tabs={[
-              { href: "/user/announcements", label: "Announcement" },
-              { href: "/user/requests", label: "Request list" },
-              { href: "/user/notifications", label: "Notification" },
-              { href: "/user/profile", label: "Profile" },
-            ]}
-          />
+          <div className="scrollbar-hide min-w-0 flex-1 overflow-x-auto">
+            <TopTabs
+              tabs={[
+                { href: "/user/announcements", label: "Announcement" },
+                { href: "/user/requests", label: "Request list" },
+                { href: "/user/notifications", label: "Notification" },
+                { href: "/user/profile", label: "Profile" },
+              ]}
+            />
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl px-5 py-6">{children}</main>
+      <main className="mx-auto w-full max-w-4xl px-4 py-4 sm:px-5 sm:py-6">{children}</main>
     </div>
   );
 }
