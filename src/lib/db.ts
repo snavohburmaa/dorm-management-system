@@ -7,11 +7,18 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 function getAdapter() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
-  return new PrismaPg({ connectionString: url });
+  // Strip sslmode from URL so Pool uses our ssl config (Supabase cert chain)
+  const connectionString = url.replace(/\?.*$/, "");
+  const pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+  return new PrismaPg(pool);
 }
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };

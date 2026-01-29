@@ -29,27 +29,42 @@ Start the development server:
 npm run dev
 ```
 
-## Database (Prisma + SQLite)
+## Database (Prisma + PostgreSQL / Supabase)
 
-The app uses Prisma with SQLite and migrations.
+The app uses Prisma with **PostgreSQL** (e.g. [Supabase](https://supabase.com)).
 
 - **Schema:** `prisma/schema.prisma` — models: `User`, `Technician`, `Announcement`, `MaintenanceRequest`, `RequestDecline`, `Notification`
-- **Config:** `prisma.config.ts` — datasource URL and migrations path (Prisma 7)
-- **Env:** Copy `.env.example` to `.env` and set `DATABASE_URL="file:./dev.db"` (default)
+- **Config:** `prisma.config.ts` — datasource URL (Prisma 7)
+- **Env:** Copy `.env.example` to `.env` and set `DATABASE_URL` to your Postgres URL (SSL required for Supabase/Render).
+
+### Supabase setup
+
+1. **Create a project** at [supabase.com](https://supabase.com) → New project (name, password, region).
+2. **Get the connection string:** Project **Settings** → **Database** → **Connection string** → **URI**.
+3. **Use the Session pooler (port 6543)** for serverless/Vercel, or **Direct (5432)** for local.
+4. **Add SSL:** Append `?sslmode=require` to the URL.
+5. **Put in `.env`:**
+   ```bash
+   DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[YOUR_PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require"
+   ```
+   Replace `[YOUR_PASSWORD]` with your database password, and keep the rest from the Supabase dashboard.
 
 ### Commands
 
 - Generate Prisma Client: `npm run db:generate`
-- Create/apply migrations: `npm run db:migrate`
+- Push schema (create/update tables): `npm run db:push`
+- Migrations: `npm run db:migrate`
 - Seed database: `npm run db:seed`
 - Open Prisma Studio: `npm run db:studio`
 
 ### First-time setup
 
 ```bash
-cp .env.example .env   # if .env doesn't exist
-npm run db:migrate     # creates prisma/migrations and dev.db
-npm run db:seed       # inserts demo user (u1/123), technician (t1/123), sample request
+cp .env.example .env
+# Edit .env and set DATABASE_URL to your Supabase (or Postgres) URL
+npm run db:generate
+npm run db:push      # creates tables in Supabase
+npm run db:seed      # optional: demo user (u1/123), technician (t1/123), sample data
 ```
 
 ## Other Commands
