@@ -29,8 +29,11 @@ function getPrisma(): PrismaClient {
   return globalForPrisma.prisma;
 }
 
-export const prisma = new Proxy({} as PrismaClient, {
-  get(_, prop) {
-    return (getPrisma() as Record<string | symbol, unknown>)[prop];
-  },
-});
+export const prisma = new Proxy(
+  {} as PrismaClient,
+  {
+    get(_, prop) {
+      return (getPrisma() as Record<string | symbol, unknown>)[prop];
+    },
+  }
+) as PrismaClient;
