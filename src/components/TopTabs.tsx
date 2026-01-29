@@ -9,11 +9,24 @@ export type TopTab = {
   label: string;
 };
 
-export function TopTabs({ tabs }: { tabs: TopTab[] }) {
+type TopTabsProps = {
+  tabs: TopTab[];
+  orientation?: "horizontal" | "vertical";
+};
+
+export function TopTabs({ tabs, orientation = "horizontal" }: TopTabsProps) {
   const pathname = usePathname();
+  const isVertical = orientation === "vertical";
 
   return (
-    <nav className="-mb-1 flex flex-shrink-0 items-center justify-end gap-1 sm:gap-2">
+    <nav
+      className={cn(
+        "flex flex-shrink-0 gap-1 sm:gap-2",
+        isVertical
+          ? "flex-col"
+          : "-mb-1 flex-row items-center justify-start",
+      )}
+    >
       {tabs.map((t) => {
         const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
         return (
@@ -21,7 +34,10 @@ export function TopTabs({ tabs }: { tabs: TopTab[] }) {
             key={t.href}
             href={t.href}
             className={cn(
-              "whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:px-4",
+              "whitespace-nowrap text-sm font-semibold transition-colors",
+              isVertical
+                ? "rounded-lg px-3 py-2 sm:px-4"
+                : "rounded-full px-3 py-2 sm:px-4",
               active ? "bg-zinc-950 text-white" : "hover:bg-zinc-100",
             )}
             aria-current={active ? "page" : undefined}
