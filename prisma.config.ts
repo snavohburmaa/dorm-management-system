@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -8,6 +8,7 @@ export default defineConfig({
     seed: "npx tsx prisma/seed.ts",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    // DATABASE_URL at runtime; fallback for build (e.g. Vercel) when var not set
+    url: process.env.DATABASE_URL?.trim() || "postgresql://localhost:5432/dorm_management",
   },
 });

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.3.0",
     "@prisma/adapter-mariadb": "^7.3.0",
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "better-sqlite3": "^12.6.2",
     "clsx": "^2.1.1",
@@ -26,6 +27,7 @@
     "lucide-react": "^0.563.0",
     "mariadb": "^3.4.5",
     "next": "16.1.4",
+    "pg": "^8.17.2",
     "prisma": "^7.3.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
