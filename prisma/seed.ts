@@ -1,6 +1,18 @@
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+const connectionString =
+  process.env.DATABASE_URL?.trim() || "postgresql://localhost:5432/dorm_management";
+
+const adapter = new PrismaPg({
+  connectionString,
+  ...(connectionString.includes("sslmode=require") && {
+    ssl: { rejectUnauthorized: false },
+  }),
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const now = new Date();
