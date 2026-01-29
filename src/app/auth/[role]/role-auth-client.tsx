@@ -51,13 +51,13 @@ export function RoleAuthClient({
 
   const title = useMemo(() => `${roleLabel(role)} ${mode}`, [mode, role]);
 
-  function onSubmit() {
+  async function onSubmit() {
     setError(null);
     if (mode === "login") {
       const res =
         role === "user"
-          ? dorm.loginUser({ email, password })
-          : dorm.loginTechnician({ email, password });
+          ? await dorm.loginUser({ email, password })
+          : await dorm.loginTechnician({ email, password });
       if (!res.ok) setError(res.error);
       else router.replace(defaultRoute(role));
       return;
@@ -65,8 +65,8 @@ export function RoleAuthClient({
 
     const res =
       role === "user"
-        ? dorm.registerUser({ name, email, password, phone })
-        : dorm.registerTechnician({ name, email, password, phone });
+        ? await dorm.registerUser({ name, email, password, phone })
+        : await dorm.registerTechnician({ name, email, password, phone });
     if (!res.ok) setError(res.error);
     else router.replace(defaultRoute(role));
   }

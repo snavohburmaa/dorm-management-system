@@ -21,9 +21,9 @@ export default function AdminLoginPage() {
     if (dorm.session?.role === "admin") router.replace("/admin/dashboard");
   }, [dorm.ready, dorm.session, router]);
 
-  function onSubmit() {
+  async function onSubmit() {
     setError(null);
-    const res = dorm.loginAdmin({ email, password });
+    const res = await dorm.loginAdmin({ email, password });
     if (!res.ok) setError(res.error);
     else router.replace("/admin/dashboard");
   }

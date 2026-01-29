@@ -53,9 +53,9 @@ export default function UserProfilePage() {
     setIsEditing(false);
   }
 
-  function submitIssue() {
+  async function submitIssue() {
     setIssueError(null);
-    const res = dorm.createRequest({ title: issueTitle, description: issueDescription });
+    const res = await dorm.createRequest({ title: issueTitle, description: issueDescription });
     if (!res.ok) {
       setIssueError(res.error);
       return;

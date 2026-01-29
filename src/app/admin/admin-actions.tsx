@@ -12,8 +12,8 @@ export function AdminActions() {
     <button
       className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold hover:bg-zinc-100 sm:gap-2 sm:px-4"
       type="button"
-      onClick={() => {
-        logout();
+      onClick={async () => {
+        await logout();
         router.replace("/");
       }}
     >
