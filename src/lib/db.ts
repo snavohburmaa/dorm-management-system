@@ -1,21 +1,29 @@
 /**
  * Prisma client for dorm management database.
  * Use this when you add API routes or server actions that read/write the DB.
- *
- * For SQLite (Prisma 7) we use the better-sqlite3 adapter.
+ * Prisma 7 requires a driver adapter for MySQL; we use @prisma/adapter-mariadb.
  */
 
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL || "file:./dev.db",
-});
+function getAdapter() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set");
+  const u = new URL(url);
+  return new PrismaMariaDb({
+    host: u.hostname,
+    port: u.port ? Number(u.port) : 3306,
+    user: u.username,
+    password: u.password,
+    database: u.pathname.slice(1) || undefined,
+  });
+}
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient({ adapter });
+  globalForPrisma.prisma ?? new PrismaClient({ adapter: getAdapter() });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

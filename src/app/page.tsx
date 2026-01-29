@@ -64,9 +64,8 @@ export default function Home() {
         </div>
 
         <p className="text-xs leading-relaxed text-zinc-500">
-          Demo credentials: user <code>u1</code> / <code>123</code>, technician{" "}
-          <code>t1</code> / <code>123</code>, admin <code>a1</code> /{" "}
-          <code>123</code>.
+        Welcome Back to Dorm Management System.
+        Sign in to manage dormitory operations efficiently.
         </p>
       </main>
     </div>

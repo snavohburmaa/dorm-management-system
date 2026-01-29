@@ -40,10 +40,6 @@ export default function AdminLoginPage() {
         <Card>
           <CardBody>
             <h1 className="text-2xl font-semibold tracking-tight">Admin login</h1>
-            <p className="mt-2 text-sm text-zinc-600">
-              Demo: <span className="font-semibold">{ADMIN_CREDENTIALS.email}</span> /{" "}
-              <span className="font-semibold">{ADMIN_CREDENTIALS.password}</span>
-            </p>
           </CardBody>
         </Card>
 

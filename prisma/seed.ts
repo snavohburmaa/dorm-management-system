@@ -1,11 +1,21 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL || "file:./dev.db",
-});
-const prisma = new PrismaClient({ adapter });
+function getAdapter() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set");
+  const u = new URL(url);
+  return new PrismaMariaDb({
+    host: u.hostname,
+    port: u.port ? Number(u.port) : 3306,
+    user: u.username,
+    password: u.password,
+    database: u.pathname.slice(1) || undefined,
+  });
+}
+
+const prisma = new PrismaClient({ adapter: getAdapter() });
 
 async function main() {
   const now = new Date();

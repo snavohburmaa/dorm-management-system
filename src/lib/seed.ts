@@ -8,8 +8,8 @@ import type {
 } from "@/lib/types";
 
 export const ADMIN_CREDENTIALS = {
-  email: "a1",
-  password: "123",
+  email: "adlogin123@dorm.local",
+  password: "adlogin123@dorm.local",
 } as const;
 
 export type SeedData = {
