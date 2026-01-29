@@ -5,9 +5,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 const connectionString =
   process.env.DATABASE_URL?.trim() || "postgresql://localhost:5432/dorm_management";
 
+const needsSslAcceptSelfSigned =
+  connectionString.includes("sslmode=require") || connectionString.includes("supabase.co");
+
 const adapter = new PrismaPg({
   connectionString,
-  ...(connectionString.includes("sslmode=require") && {
+  ...(needsSslAcceptSelfSigned && {
     ssl: { rejectUnauthorized: false },
   }),
 });
