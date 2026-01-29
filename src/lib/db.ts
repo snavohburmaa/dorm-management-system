@@ -1,8 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString =
-  process.env.DATABASE_URL?.trim() || "postgresql://localhost:5432/dorm_management";
+const connectionString = process.env.DATABASE_URL?.trim();
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
 
 const needsSslAcceptSelfSigned =
   connectionString.includes("sslmode=require") || connectionString.includes("supabase.co");
