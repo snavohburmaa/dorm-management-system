@@ -107,7 +107,10 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
         });
         const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
         if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
-        if (data.session) setSessionCookie(data.session);
+        if (data.session) {
+          setSessionCookie(data.session);
+          setState((prev) => ({ ...prev, session: data.session, ready: true }));
+        }
         await refetchData();
         return { ok: true };
       } catch (e) {
@@ -119,16 +122,24 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
 
   const loginUser = useCallback<DormActions["loginUser"]>(
     async (payload) => {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ role: "user", email: payload.email, password: payload.password }),
-      });
-      const data = await res.json();
-      if (!data.ok) return { ok: false, error: data.error ?? "Invalid email or password." };
-      await refetchData();
-      return { ok: true };
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ role: "user", email: payload.email, password: payload.password }),
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
+        if (!data.ok) return { ok: false, error: data.error ?? "Invalid email or password." };
+        if (data.session) {
+          setSessionCookie(data.session);
+          setState((prev) => ({ ...prev, session: data.session, ready: true }));
+        }
+        await refetchData();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network or server error." };
+      }
     },
     [refetchData],
   );
@@ -144,7 +155,10 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
         });
         const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
         if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
-        if (data.session) setSessionCookie(data.session);
+        if (data.session) {
+          setSessionCookie(data.session);
+          setState((prev) => ({ ...prev, session: data.session, ready: true }));
+        }
         await refetchData();
         return { ok: true };
       } catch (e) {
@@ -156,32 +170,48 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
 
   const loginTechnician = useCallback<DormActions["loginTechnician"]>(
     async (payload) => {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ role: "technician", email: payload.email, password: payload.password }),
-      });
-      const data = await res.json();
-      if (!data.ok) return { ok: false, error: data.error ?? "Invalid email or password." };
-      await refetchData();
-      return { ok: true };
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ role: "technician", email: payload.email, password: payload.password }),
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
+        if (!data.ok) return { ok: false, error: data.error ?? "Invalid email or password." };
+        if (data.session) {
+          setSessionCookie(data.session);
+          setState((prev) => ({ ...prev, session: data.session, ready: true }));
+        }
+        await refetchData();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network or server error." };
+      }
     },
     [refetchData],
   );
 
   const loginAdmin = useCallback<DormActions["loginAdmin"]>(
     async (payload) => {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ role: "admin", email: payload.email, password: payload.password }),
-      });
-      const data = await res.json();
-      if (!data.ok) return { ok: false, error: data.error ?? "Invalid admin credentials." };
-      await refetchData();
-      return { ok: true };
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ role: "admin", email: payload.email, password: payload.password }),
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
+        if (!data.ok) return { ok: false, error: data.error ?? "Invalid admin credentials." };
+        if (data.session) {
+          setSessionCookie(data.session);
+          setState((prev) => ({ ...prev, session: data.session, ready: true }));
+        }
+        await refetchData();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network or server error." };
+      }
     },
     [refetchData],
   );

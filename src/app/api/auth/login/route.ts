@@ -55,8 +55,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: false, error: "Invalid role." }, { status: 400 });
   } catch (e) {
-    console.error("Login error:", e);
-    return NextResponse.json({ ok: false, error: "Server error." }, { status: 500 });
+    const err = e as Error & { code?: string };
+    console.error("Login error:", err?.message ?? err, err);
+    const isDev = process.env.NODE_ENV === "development";
+    const message =
+      err?.code === "P1001"
+        ? "Database is unreachable. Check DATABASE_URL."
+        : isDev && err?.message
+          ? err.message
+          : "Server error.";
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }
 

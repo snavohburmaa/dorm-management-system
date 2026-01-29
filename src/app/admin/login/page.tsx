@@ -15,6 +15,7 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!dorm.ready) return;
@@ -23,9 +24,16 @@ export default function AdminLoginPage() {
 
   async function onSubmit() {
     setError(null);
-    const res = await dorm.loginAdmin({ email, password });
-    if (!res.ok) setError(res.error);
-    else router.replace("/admin/dashboard");
+    setLoading(true);
+    try {
+      const res = await dorm.loginAdmin({ email, password });
+      if (!res.ok) setError(res.error ?? "Login failed.");
+      else router.replace("/admin/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -70,8 +78,13 @@ export default function AdminLoginPage() {
               </div>
             ) : null}
 
-            <Button className="w-full" onClick={onSubmit} type="button">
-              Login
+            <Button
+              className="w-full"
+              onClick={onSubmit}
+              type="button"
+              disabled={loading}
+            >
+              {loading ? "Please wait…" : "Login"}
             </Button>
           </CardBody>
         </Card>
