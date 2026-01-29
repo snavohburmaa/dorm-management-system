@@ -98,17 +98,21 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
 
   const registerUser = useCallback<DormActions["registerUser"]>(
     async (payload) => {
-      const res = await fetch("/api/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ action: "registerUser", payload }),
-      });
-      const data = await res.json();
-      if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
-      if (data.session) setSessionCookie(data.session);
-      await refetchData();
-      return { ok: true };
+      try {
+        const res = await fetch("/api/action", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ action: "registerUser", payload }),
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
+        if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
+        if (data.session) setSessionCookie(data.session);
+        await refetchData();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network or server error." };
+      }
     },
     [refetchData],
   );
@@ -131,17 +135,21 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
 
   const registerTechnician = useCallback<DormActions["registerTechnician"]>(
     async (payload) => {
-      const res = await fetch("/api/action", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ action: "registerTechnician", payload }),
-      });
-      const data = await res.json();
-      if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
-      if (data.session) setSessionCookie(data.session);
-      await refetchData();
-      return { ok: true };
+      try {
+        const res = await fetch("/api/action", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ action: "registerTechnician", payload }),
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Invalid server response." }));
+        if (!data.ok) return { ok: false, error: data.error ?? "Failed" };
+        if (data.session) setSessionCookie(data.session);
+        await refetchData();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : "Network or server error." };
+      }
     },
     [refetchData],
   );

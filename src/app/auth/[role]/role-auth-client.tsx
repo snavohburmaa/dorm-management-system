@@ -33,6 +33,7 @@ export function RoleAuthClient({
   const [phone, setPhone] = useState("");
 
   const [role, setRole] = useState<Role>("user");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -53,22 +54,29 @@ export function RoleAuthClient({
 
   async function onSubmit() {
     setError(null);
-    if (mode === "login") {
+    setLoading(true);
+    try {
+      if (mode === "login") {
+        const res =
+          role === "user"
+            ? await dorm.loginUser({ email, password })
+            : await dorm.loginTechnician({ email, password });
+        if (!res.ok) setError(res.error ?? "Login failed.");
+        else router.replace(defaultRoute(role));
+        return;
+      }
+
       const res =
         role === "user"
-          ? await dorm.loginUser({ email, password })
-          : await dorm.loginTechnician({ email, password });
-      if (!res.ok) setError(res.error);
+          ? await dorm.registerUser({ name, email, password, phone })
+          : await dorm.registerTechnician({ name, email, password, phone });
+      if (!res.ok) setError(res.error ?? "Registration failed.");
       else router.replace(defaultRoute(role));
-      return;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Check the console.");
+    } finally {
+      setLoading(false);
     }
-
-    const res =
-      role === "user"
-        ? await dorm.registerUser({ name, email, password, phone })
-        : await dorm.registerTechnician({ name, email, password, phone });
-    if (!res.ok) setError(res.error);
-    else router.replace(defaultRoute(role));
   }
 
   return (
@@ -151,8 +159,13 @@ export function RoleAuthClient({
               </div>
             ) : null}
 
-            <Button className="w-full" onClick={onSubmit} type="button">
-              {mode === "register" ? "Create account" : "Login"}
+            <Button
+              className="w-full"
+              onClick={onSubmit}
+              type="button"
+              disabled={loading}
+            >
+              {loading ? "Please wait…" : mode === "register" ? "Create account" : "Login"}
             </Button>
           </CardBody>
         </Card>
