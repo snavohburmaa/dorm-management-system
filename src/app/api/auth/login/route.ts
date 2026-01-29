@@ -7,6 +7,12 @@ import { ADMIN_CREDENTIALS } from "@/lib/seed";
 
 export async function POST(request: Request) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { ok: false, error: "Database not configured. Running in frontend-only mode." },
+        { status: 503 }
+      );
+    }
     const body = await request.json();
     const { role, email, password } = body as { role: string; email: string; password: string };
     const normalizedEmail = email?.trim().toLowerCase();

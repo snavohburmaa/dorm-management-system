@@ -7,7 +7,6 @@ import { Button } from "@/components/Button";
 import { Card, CardBody } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { useDorm } from "@/lib/store";
-import { ADMIN_CREDENTIALS } from "@/lib/seed";
 
 export default function AdminLoginPage() {
   const router = useRouter();

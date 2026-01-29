@@ -21,11 +21,11 @@ export type SeedData = {
   notifications: NotificationItem[];
 };
 
-function nowIso() {
+export function nowIso() {
   return new Date().toISOString();
 }
 
-function id(prefix: string) {
+export function id(prefix: string) {
   return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
 }
 

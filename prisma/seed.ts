@@ -39,7 +39,7 @@ async function main() {
   });
 
   // Demo technician (t1 / 123)
-  const technician = await prisma.technician.upsert({
+  await prisma.technician.upsert({
     where: { email: "t1" },
     create: {
       name: "t1",

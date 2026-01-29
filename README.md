@@ -41,8 +41,8 @@ The app uses Prisma with **PostgreSQL** (e.g. [Supabase](https://supabase.com)).
 
 1. **Create a project** at [supabase.com](https://supabase.com) → New project (name, password, region).
 2. **Get the connection string:** Project **Settings** → **Database** → **Connection string** → **URI**.
-3. **Use the Session pooler (port 6543)** for serverless/Vercel, or **Direct (5432)** for local.
-4. **Add SSL:** Append `?sslmode=require` to the URL.
+3. **Use Direct (port 5432)** for local dev, or **Transaction pooler (6543)** for serverless.
+4. SSL is **enabled automatically** for `supabase.co` URLs; you can add `?sslmode=require` for pooler if needed.
 5. **Put in `.env`:**
    ```bash
    DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[YOUR_PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require"

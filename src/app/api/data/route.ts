@@ -13,6 +13,16 @@ import {
 
 export async function GET() {
   try {
+    if (!prisma) {
+      return NextResponse.json({
+        session: null,
+        users: [],
+        technicians: [],
+        announcements: [],
+        requests: [],
+        notifications: [],
+      });
+    }
     const session = await getSession();
 
     const [users, technicians, announcements, requestsDb, notificationsDb] =
