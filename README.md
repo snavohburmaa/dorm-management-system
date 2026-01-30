@@ -2,6 +2,11 @@
 
 A Next.js application for managing dormitory operations.
 
+## Tech stack
+
+- **Database:** PostgreSQL (hosted on [Supabase](https://supabase.com))
+- **Deployment:** [Vercel](https://vercel.com)
+
 ## Prerequisites
 
 - **Node.js** (version 18 or higher)
@@ -66,6 +71,16 @@ npm run db:generate
 npm run db:push      # creates tables in Supabase
 npm run db:seed      # optional: demo user (u1/123), technician (t1/123), sample data
 ```
+
+## Deploying on Vercel
+
+1. Push your code to GitHub (or GitLab/Bitbucket).
+2. Go to [vercel.com](https://vercel.com) and sign in.
+3. **New Project** → Import your repository.
+4. Add the **`DATABASE_URL`** environment variable (your PostgreSQL/Supabase connection string).
+5. Deploy. Vercel will detect Next.js and run `npm run build` automatically.
+
+For serverless/edge, use the **Transaction pooler** connection string (port 6543) from Supabase for `DATABASE_URL` on Vercel.
 
 ## Other Commands
 
