@@ -110,6 +110,11 @@ export default function TechnicianTasksPage() {
                       <span className="text-xs text-zinc-500">
                         Updated: {formatDateTime(t.updatedAt)}
                       </span>
+                      {t.preferredAt ? (
+                        <span className="text-xs text-zinc-600" suppressHydrationWarning>
+                          Preferred time: {formatDateTime(t.preferredAt)}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                   <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:items-end">
@@ -134,6 +139,14 @@ export default function TechnicianTasksPage() {
                           <span className="font-medium text-zinc-700">Phone:</span>{" "}
                           {requestUser?.phone ?? "—"}
                         </div>
+                        {t.preferredAt ? (
+                          <div>
+                            <span className="font-medium text-zinc-700">Preferred time:</span>{" "}
+                            <span suppressHydrationWarning>
+                              {formatDateTime(t.preferredAt)}
+                            </span>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                     {!t.acceptedByTechnician ? (

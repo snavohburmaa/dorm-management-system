@@ -25,6 +25,7 @@ export default function UserProfilePage() {
 
   const [issueTitle, setIssueTitle] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
+  const [issuePreferredTime, setIssuePreferredTime] = useState("");
   const [issueError, setIssueError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -55,13 +56,18 @@ export default function UserProfilePage() {
 
   async function submitIssue() {
     setIssueError(null);
-    const res = await dorm.createRequest({ title: issueTitle, description: issueDescription });
+    const res = await dorm.createRequest({
+      title: issueTitle,
+      description: issueDescription,
+      preferredAt: issuePreferredTime.trim() || null,
+    });
     if (!res.ok) {
       setIssueError(res.error);
       return;
     }
     setIssueTitle("");
     setIssueDescription("");
+    setIssuePreferredTime("");
   }
 
   return (
@@ -190,6 +196,18 @@ export default function UserProfilePage() {
               onChange={(e) => setIssueDescription(e.target.value)}
               placeholder="Describe the issue..."
             />
+          </div>
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-zinc-600">Preferred time for maintenance (optional)</div>
+            <input
+              type="datetime-local"
+              value={issuePreferredTime}
+              onChange={(e) => setIssuePreferredTime(e.target.value)}
+              className="h-10 w-full rounded-2xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900"
+            />
+            <p className="text-xs text-zinc-500">
+              When you prefer the technician to come. Leave empty if no preference.
+            </p>
           </div>
 
           {issueError ? (

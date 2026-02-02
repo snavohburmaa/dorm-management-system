@@ -65,6 +65,7 @@ export function createSeedData(): SeedData {
       description: "There is a leak under the sink. Please check.",
       status: "pending",
       priority: "medium",
+      preferredAt: null,
       assignedTechnicianId: null,
       acceptedByTechnician: false,
       declinedByTechnicianIds: [],

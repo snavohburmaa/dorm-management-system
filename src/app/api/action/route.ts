@@ -105,12 +105,20 @@ export async function POST(request: Request) {
         if (!session || session.role !== "user") {
           return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
         }
-        const { title, description } = (payload ?? {}) as Record<string, string>;
+        const { title, description, preferredAt } = (payload ?? {}) as Record<string, string | undefined>;
+        const preferredAtDate =
+          preferredAt && preferredAt.trim()
+            ? new Date(preferredAt.trim())
+            : undefined;
+        if (preferredAtDate && Number.isNaN(preferredAtDate.getTime())) {
+          return NextResponse.json({ ok: false, error: "Invalid preferred time." }, { status: 400 });
+        }
         const req = await prisma.maintenanceRequest.create({
           data: {
             userId: session.id,
             title: title ?? "",
             description: description ?? "",
+            ...(preferredAtDate && { preferredAt: preferredAtDate }),
           },
         });
         await prisma.notification.create({

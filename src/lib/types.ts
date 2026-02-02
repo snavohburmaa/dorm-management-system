@@ -49,6 +49,8 @@ export type MaintenanceRequest = {
   description: string;
   status: RequestStatus;
   priority: RequestPriority;
+  /** When the user prefers the technician to come for maintenance (ISO string or null) */
+  preferredAt: string | null;
   assignedTechnicianId: string | null;
   acceptedByTechnician: boolean;
   /** Technician IDs who declined this request (so admin can see and reassign) */

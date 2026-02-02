@@ -92,6 +92,11 @@ export default function UserRequestsPage() {
                         <span className="text-xs text-zinc-500">
                           Created: {formatDateTime(r.createdAt)}
                         </span>
+                        {r.preferredAt ? (
+                          <span className="text-xs text-zinc-600" suppressHydrationWarning>
+                            Preferred time: {formatDateTime(r.preferredAt)}
+                          </span>
+                        ) : null}
                       </div>
                       {r.technicianNotes ? (
                         <div className="mt-3 rounded-xl bg-zinc-50 px-3 py-2 text-sm text-zinc-700">

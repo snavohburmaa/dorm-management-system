@@ -163,6 +163,11 @@ export default function AdminRequestsPage() {
                             </>
                           )}
                         </div>
+                        {r.preferredAt ? (
+                          <div className="mt-1 text-xs text-zinc-600" suppressHydrationWarning>
+                            Preferred time: {formatDateTime(r.preferredAt)}
+                          </div>
+                        ) : null}
                         <div className="mt-2 flex flex-wrap gap-2">
                           <Badge tone={toneForStatus(r.status)}>
                             {r.status.replaceAll("_", " ")}
@@ -246,6 +251,17 @@ export default function AdminRequestsPage() {
                     </div>
                   </div>
                 </div>
+
+                {selectedRequest.preferredAt ? (
+                  <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                    <div className="text-xs font-semibold text-zinc-500">
+                      User preferred time for maintenance
+                    </div>
+                    <div className="mt-1 text-sm font-medium text-zinc-900" suppressHydrationWarning>
+                      {formatDateTime(selectedRequest.preferredAt)}
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={toneForStatus(selectedRequest.status)}>

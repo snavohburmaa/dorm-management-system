@@ -37,6 +37,7 @@ CREATE TABLE "MaintenanceRequest" (
     "description" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending',
     "priority" TEXT NOT NULL DEFAULT 'medium',
+    "preferredAt" DATETIME,
     "assignedTechnicianId" TEXT,
     "acceptedByTechnician" BOOLEAN NOT NULL DEFAULT false,
     "technicianNotes" TEXT NOT NULL DEFAULT '',

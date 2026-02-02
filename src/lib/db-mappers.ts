@@ -9,7 +9,7 @@ import type {
 type DbUser = { id: string; name: string; phone: string; building: string; floor: string; room: string; email: string; password: string; createdAt: Date };
 type DbTechnician = { id: string; name: string; phone: string; email: string; password: string; createdAt: Date };
 type DbAnnouncement = { id: string; title: string; body: string; createdAt: Date };
-type DbRequest = { id: string; userId: string; title: string; description: string; status: string; priority: string; assignedTechnicianId: string | null; acceptedByTechnician: boolean; technicianNotes: string; createdAt: Date; updatedAt: Date; declinedBy?: { technicianId: string }[] };
+type DbRequest = { id: string; userId: string; title: string; description: string; status: string; priority: string; preferredAt: Date | null; assignedTechnicianId: string | null; acceptedByTechnician: boolean; technicianNotes: string; createdAt: Date; updatedAt: Date; declinedBy?: { technicianId: string }[] };
 type DbNotification = { id: string; userId: string; requestId: string; type: string; title: string; message: string; createdAt: Date };
 
 export function mapUser(u: DbUser): UserProfile {
@@ -59,6 +59,7 @@ export function mapRequest(r: DbRequest): MaintenanceRequest {
     description: r.description,
     status: r.status as MaintenanceRequest["status"],
     priority: r.priority as MaintenanceRequest["priority"],
+    preferredAt: r.preferredAt ? r.preferredAt.toISOString() : null,
     assignedTechnicianId: r.assignedTechnicianId ?? null,
     acceptedByTechnician: r.acceptedByTechnician,
     declinedByTechnicianIds,

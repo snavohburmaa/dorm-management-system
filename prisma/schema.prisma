@@ -46,6 +46,8 @@ model MaintenanceRequest {
   description          String
   status               String           @default("pending")
   priority             String           @default("medium")
+  /** When the user prefers the technician to come for maintenance */
+  preferredAt          DateTime?
   assignedTechnicianId String?
   acceptedByTechnician Boolean          @default(false)
   technicianNotes      String           @default("")

@@ -51,7 +51,7 @@ type DormActions = {
   updateUserProfile(patch: Partial<Pick<UserProfile, "name" | "phone" | "building" | "floor" | "room">>): Promise<void>;
   updateTechnicianProfile(patch: Partial<Pick<TechnicianProfile, "name" | "phone">>): Promise<void>;
 
-  createRequest(payload: { title: string; description: string }): Promise<{ ok: true } | { ok: false; error: string }>;
+  createRequest(payload: { title: string; description: string; preferredAt?: string | null }): Promise<{ ok: true } | { ok: false; error: string }>;
   assignTechnician(payload: { requestId: string; technicianId: string | null }): Promise<void>;
   setRequestPriority(payload: { requestId: string; priority: RequestPriority }): Promise<void>;
   technicianAccept(payload: { requestId: string }): Promise<void>;
@@ -389,6 +389,7 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
           description: payload.description ?? "",
           status: "pending",
           priority: "medium",
+          preferredAt: payload.preferredAt ?? null,
           assignedTechnicianId: null,
           acceptedByTechnician: false,
           declinedByTechnicianIds: [],
