@@ -21,3 +21,10 @@ export function formatDate(iso: string): string {
   const D = String(d.getUTCDate()).padStart(2, "0");
   return `${D}/${M}/${y}`;
 }
+
+export function formatChatTime(iso: string): string {
+  const d = new Date(iso);
+  const h = String(d.getUTCHours()).padStart(2, "0");
+  const m = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${h}:${m}`;
+}

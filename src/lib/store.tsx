@@ -3,6 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type {
   Announcement,
+  ChatMessage,
   MaintenanceRequest,
   NotificationItem,
   RequestPriority,
@@ -60,6 +61,11 @@ type DormActions = {
 
   addAnnouncement(payload: { title: string; body: string }): Promise<void>;
   updateAnnouncement(payload: { announcementId: string; title: string; body: string }): Promise<void>;
+
+  getChatMessages(requestId: string): Promise<
+    { ok: true; messages: ChatMessage[]; chatOpen: boolean } | { ok: false; error: string }
+  >;
+  sendChatMessage(requestId: string, message: string): Promise<{ ok: true; message: ChatMessage } | { ok: false; error: string }>;
 
   /** Rehydrate session from cookie (e.g. after navigation when store was out of sync). */
   setSession(session: Session): void;
@@ -602,6 +608,33 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
     [refetchData, state.users, state.technicians, state.announcements, state.requests, state.notifications],
   );
 
+  const getChatMessages = useCallback<DormActions["getChatMessages"]>(async (requestId) => {
+    if (FRONTEND_ONLY) return { ok: true, messages: [], chatOpen: false };
+    const res = await fetch(`/api/chat?requestId=${encodeURIComponent(requestId)}`, { credentials: "include" });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data?.error ?? "Failed to load messages." };
+    if (!data.ok) return { ok: false, error: data.error ?? "Failed to load messages." };
+    return {
+      ok: true,
+      messages: data.messages ?? [],
+      chatOpen: data.chatOpen !== false,
+    };
+  }, []);
+
+  const sendChatMessage = useCallback<DormActions["sendChatMessage"]>(async (requestId, message) => {
+    if (FRONTEND_ONLY) return { ok: false, error: "Chat not available offline." };
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ requestId, message }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data?.error ?? "Failed to send." };
+    if (!data.ok) return { ok: false, error: data.error ?? "Failed to send." };
+    return { ok: true, message: data.message };
+  }, []);
+
   const setSession = useCallback((session: Session) => {
     setState((prev) => ({ ...prev, session }));
   }, []);
@@ -625,11 +658,15 @@ export function DormProvider({ children }: { children: React.ReactNode }) {
       technicianUpdate,
       addAnnouncement,
       updateAnnouncement,
+      getChatMessages,
+      sendChatMessage,
       setSession,
     }),
     [
       addAnnouncement,
       updateAnnouncement,
+      getChatMessages,
+      sendChatMessage,
       assignTechnician,
       createRequest,
       setRequestPriority,

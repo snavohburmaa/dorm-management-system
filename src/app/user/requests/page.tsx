@@ -104,6 +104,15 @@ export default function UserRequestsPage() {
                           {r.technicianNotes}
                         </div>
                       ) : null}
+                      {r.status !== "complete" ? (
+                        <Link
+                          href={`/user/requests/${r.id}/chat`}
+                          className="mt-3 flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+                        >
+                          <span>Message</span>
+                          <span className="text-zinc-400">→</span>
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 </div>

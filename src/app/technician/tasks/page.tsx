@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
+import Link from "next/link";
 import { Card, CardBody } from "@/components/Card";
 import { EmptyState } from "@/components/EmptyState";
 import { Textarea } from "@/components/Textarea";
@@ -170,6 +171,16 @@ export default function TechnicianTasksPage() {
                     )}
                   </div>
                 </div>
+
+                {t.status !== "complete" ? (
+                  <Link
+                    href={`/technician/tasks/${t.id}/chat`}
+                    className="flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+                  >
+                    <span>Message</span>
+                    <span className="text-zinc-400">→</span>
+                  </Link>
+                ) : null}
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">

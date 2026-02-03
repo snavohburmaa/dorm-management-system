@@ -70,3 +70,14 @@ export type NotificationItem = {
   createdAt: string;
 };
 
+export type ChatMessageSenderRole = "user" | "technician";
+
+export type ChatMessage = {
+  id: string;
+  requestId: string;
+  senderRole: ChatMessageSenderRole;
+  senderId: string;
+  body: string;
+  createdAt: string;
+};
+

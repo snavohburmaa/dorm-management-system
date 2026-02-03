@@ -40,23 +40,34 @@ model Announcement {
 }
 
 model MaintenanceRequest {
-  id                   String           @id @default(cuid())
+  id                   String                 @id @default(cuid())
   userId               String
   title                String
   description          String
-  status               String           @default("pending")
-  priority             String           @default("medium")
+  status               String                 @default("pending")
+  priority             String                 @default("medium")
   /** When the user prefers the technician to come for maintenance */
   preferredAt          DateTime?
   assignedTechnicianId String?
-  acceptedByTechnician Boolean          @default(false)
-  technicianNotes      String           @default("")
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-  assignedTechnician   Technician?      @relation("AssignedTechnician", fields: [assignedTechnicianId], references: [id])
-  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  acceptedByTechnician Boolean                @default(false)
+  technicianNotes      String                 @default("")
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  assignedTechnician   Technician?            @relation("AssignedTechnician", fields: [assignedTechnicianId], references: [id])
+  user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   notifications        Notification[]
   declinedBy           RequestDecline[]
+  chatMessages         RequestChatMessage[]
+}
+
+model RequestChatMessage {
+  id        String             @id @default(cuid())
+  requestId String
+  senderRole String            // "user" | "technician"
+  senderId   String
+  body      String             @db.Text
+  createdAt DateTime           @default(now())
+  request   MaintenanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
 }
 
 model RequestDecline {

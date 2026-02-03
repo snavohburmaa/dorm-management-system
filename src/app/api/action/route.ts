@@ -206,10 +206,14 @@ export async function POST(request: Request) {
           status: string;
           technicianNotes?: string;
         };
+        const newStatus = status ?? "pending";
+        if (newStatus === "complete") {
+          await prisma.requestChatMessage.deleteMany({ where: { requestId } });
+        }
         await prisma.maintenanceRequest.update({
           where: { id: requestId },
           data: {
-            status: status ?? "pending",
+            status: newStatus,
             technicianNotes: technicianNotes ?? undefined,
           },
         });
