@@ -87,3 +87,10 @@ For serverless/edge, use the **Transaction pooler** connection string (port 6543
 - Build for production: `npm run build`
 - Start production server: `npm start`
 - Run linter: `npm run lint`
+
+## Project Overview
+
+1. user can report their room's issue,
+2. admin can assign the task to technician, and can post announcement.
+3. technician can accept the task or not, and can submit the note for the issue.
+4. there is real time chat with user and technician for each maintenance request.
