@@ -1,15 +1,29 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export function Card({
   children,
   className,
+  lift = false,
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  lift?: boolean;
+  style?: CSSProperties;
 }) {
   return (
-    <div className={cn("rounded-3xl border border-zinc-200 bg-white", className)}>
+    <div
+      style={style}
+      className={cn(
+        "rounded-3xl border bg-white",
+        "border-zinc-200/70",
+        "[box-shadow:var(--shadow-md)]",
+        "[background-image:linear-gradient(to_bottom,#fff_0%,#fafafa_100%)]",
+        lift && "lift",
+        className,
+      )}
+    >
       {children}
     </div>
   );

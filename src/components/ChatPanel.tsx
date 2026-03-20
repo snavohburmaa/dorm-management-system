@@ -66,16 +66,20 @@ export function ChatPanel({ requestId, isActive, myRole, canSend: canSendProp }:
   if (!isActive) return null;
 
   return (
-    <div className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50 overflow-hidden">
-      <div className="border-b border-zinc-200 bg-white px-3 py-2">
-        <span className="text-xs font-semibold text-zinc-600">Chat (live)</span>
+    <div className="anim-enter overflow-hidden rounded-2xl border border-zinc-200/70 bg-white [box-shadow:var(--shadow-md)]">
+      {/* Header */}
+      <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-50/80 px-4 py-2.5">
+        <span className="inline-block size-2 rounded-full bg-emerald-400 [box-shadow:0_0_6px_rgba(52,211,153,0.6)]" />
+        <span className="text-xs font-semibold text-zinc-600">Live chat</span>
       </div>
+
+      {/* Messages */}
       <div
         ref={scrollRef}
-        className="max-h-48 min-h-24 overflow-y-auto p-3 space-y-2"
+        className="scrollbar-hide max-h-56 min-h-24 space-y-3 overflow-y-auto p-4"
       >
         {messages.length === 0 ? (
-          <p className="text-xs text-zinc-500 py-2">No messages yet. Say hello.</p>
+          <p className="py-3 text-center text-xs text-zinc-400">No messages yet. Say hello 👋</p>
         ) : (
           messages.map((m) => {
             const isMe = m.senderRole === myRole;
@@ -85,19 +89,19 @@ export function ChatPanel({ requestId, isActive, myRole, canSend: canSendProp }:
                 className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
+                  className={`max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
                     isMe
-                      ? "bg-zinc-900 text-white rounded-br-md"
-                      : "bg-white border border-zinc-200 text-zinc-800 rounded-bl-md"
+                      ? "rounded-br-sm bg-zinc-950 text-white [box-shadow:0_2px_8px_rgba(0,0,0,0.18)]"
+                      : "rounded-bl-sm border border-zinc-100 bg-zinc-50 text-zinc-800 [box-shadow:var(--shadow-xs)]"
                   }`}
                 >
-                  <div>{m.body}</div>
+                  {m.body}
                   <div
-                    className={`mt-1 text-[10px] ${isMe ? "text-zinc-400" : "text-zinc-400"}`}
+                    className="mt-1 text-[10px] opacity-50"
                     suppressHydrationWarning
                   >
                     {formatChatTime(m.createdAt)}
-                    {isMe ? "" : ` · ${m.senderRole}`}
+                    {!isMe ? ` · ${m.senderRole}` : ""}
                   </div>
                 </div>
               </div>
@@ -105,42 +109,50 @@ export function ChatPanel({ requestId, isActive, myRole, canSend: canSendProp }:
           })
         )}
       </div>
-      {!canSend && myRole === "user" ? (
-        <div className="border-t border-zinc-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
-          Chat opens when admin assigns a technician and they accept this task.
+
+      {/* Waiting notice */}
+      {!canSend ? (
+        <div className="border-t border-amber-100 bg-amber-50 px-4 py-2.5 text-xs text-amber-700">
+          {myRole === "user"
+            ? "Chat opens once a technician is assigned and accepts the task."
+            : "Accept the task on the Tasks page to start chatting."}
         </div>
       ) : null}
-      {!canSend && myRole === "technician" ? (
-        <div className="border-t border-zinc-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
-          Accept the task on the Tasks page to start chatting with the user.
-        </div>
-      ) : null}
-      <form onSubmit={handleSend} className="flex gap-2 border-t border-zinc-200 bg-white p-2">
+
+      {/* Input */}
+      <form
+        onSubmit={handleSend}
+        className="flex gap-2 border-t border-zinc-100 bg-white p-2.5"
+      >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
-              canSend
-                ? "Type a message..."
-                : myRole === "user"
-                  ? "Waiting for technician to accept..."
-                  : "Accept the task to chat..."
-            }
+            canSend
+              ? "Type a message…"
+              : myRole === "user"
+                ? "Waiting for technician…"
+                : "Accept task to chat…"
+          }
           disabled={!canSend}
-          className="flex-1 min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-zinc-400 disabled:opacity-60"
+          className="min-w-0 flex-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-3 py-2 text-sm outline-none
+            transition focus:border-zinc-400 focus:bg-white disabled:opacity-50"
           maxLength={2000}
         />
         <button
           type="submit"
           disabled={!canSend || sending || !input.trim()}
-          className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-xl bg-zinc-950 px-4 py-2 text-sm font-semibold text-white
+            transition-all duration-150 hover:-translate-y-px hover:[box-shadow:0_4px_12px_rgba(0,0,0,0.25)]
+            disabled:translate-y-0 disabled:opacity-40 disabled:[box-shadow:none]"
         >
-          Send
+          {sending ? "…" : "Send"}
         </button>
       </form>
+
       {error ? (
-        <div className="bg-red-50 px-3 py-2 text-xs text-red-700 border-t border-red-100">
+        <div className="border-t border-red-100 bg-red-50 px-4 py-2.5 text-xs text-red-600">
           {error}
         </div>
       ) : null}

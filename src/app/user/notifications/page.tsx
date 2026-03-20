@@ -210,28 +210,31 @@ export default function UserNotificationsPage() {
   }, [userId, notifications, requests, technicians]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <Card>
+    <div className="space-y-4 sm:space-y-5">
+      <Card className="anim-enter">
         <CardBody>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Notifications</h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Technician updates (pending / in progress / complete) will appear
-            here.
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Notifications</h1>
+          <p className="mt-1.5 text-sm text-zinc-500">
+            Technician updates for your maintenance requests.
           </p>
         </CardBody>
       </Card>
 
       {grouped.length === 0 ? (
-        <EmptyState title="No notifications yet" />
+        <EmptyState className="anim-enter delay-100" title="No notifications yet" description="Updates will appear here once a technician is assigned." />
       ) : (
-        <div className="space-y-4">
-          {grouped.map((group) => {
+        <div className="space-y-3">
+          {grouped.map((group, i) => {
             const notificationCount = group.notifications.length;
 
             return (
-              <Card key={group.requestId}>
+              <Card
+                key={group.requestId}
+                className="anim-enter"
+                style={{ animationDelay: `${(i + 1) * 60}ms` } as React.CSSProperties}
+              >
                 <CardBody>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <div className="text-base font-semibold sm:text-lg">{group.request.title}</div>
@@ -239,31 +242,27 @@ export default function UserNotificationsPage() {
                           {group.request.status.replaceAll("_", " ")}
                         </Badge>
                         {notificationCount > 1 && (
-                          <Badge tone="neutral" className="text-xs">
-                            {notificationCount} updates
-                          </Badge>
+                          <Badge tone="neutral">{notificationCount} updates</Badge>
                         )}
                       </div>
-                      <div className="mt-2 text-sm text-zinc-700">
+                      <div className="mt-2 text-sm leading-relaxed text-zinc-600">
                         {group.latestNotification.message}
                       </div>
                       {group.technician && (
                         <div className="mt-2 text-xs text-zinc-500">
-                          Technician: {group.technician.name}
-                          {group.technician.phone ? ` (${group.technician.phone})` : ""}
+                          Technician: <span className="font-medium text-zinc-700">{group.technician.name}</span>
+                          {group.technician.phone ? ` · ${group.technician.phone}` : ""}
                         </div>
                       )}
-                      <div className="mt-2 text-xs text-zinc-500">
+                      <div className="mt-1.5 text-xs text-zinc-400">
                         Latest: {formatDateTime(group.latestNotification.createdAt)}
                       </div>
-                      <div className="mt-3 rounded-xl border-2 border-zinc-200 bg-zinc-50 p-3">
-                        <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                          Tech&apos;s note
+                      <div className="mt-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
+                        <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                          Technician note
                         </div>
-                        <div className="mt-2 min-h-[2.5rem] text-sm text-zinc-800">
-                          {group.request.technicianNotes.trim()
-                            ? group.request.technicianNotes
-                            : "—"}
+                        <div className="mt-1.5 min-h-[2rem] text-sm text-zinc-700">
+                          {group.request.technicianNotes.trim() ? group.request.technicianNotes : "—"}
                         </div>
                       </div>
                       <ProcessTimeline request={group.request} />

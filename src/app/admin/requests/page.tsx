@@ -62,58 +62,43 @@ export default function AdminRequestsPage() {
   }, [activeRequests, dorm.requests]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <Card>
+    <div className="space-y-4 sm:space-y-5">
+      <Card className="anim-enter">
         <CardBody>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
             Maintenance Requests
           </h1>
-          <p className="mt-2 text-sm text-zinc-600">
+          <p className="mt-1.5 text-sm text-zinc-500">
             View and manage all maintenance requests. Assign technicians and set priority.
           </p>
         </CardBody>
       </Card>
 
-      <Card>
+      <Card className="anim-enter delay-50">
         <CardBody className="space-y-4">
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            <button
-              type="button"
-              onClick={() => setFilter("all")}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
-                filter === "all"
-                  ? "bg-zinc-900 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-              }`}
-            >
-              All ({counts.all})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter("pending")}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
-                filter === "pending"
-                  ? "bg-yellow-500 text-white"
-                  : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-              }`}
-            >
-              Pending ({counts.pending})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter("in_progress")}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
-                filter === "in_progress"
-                  ? "bg-blue-500 text-white"
-                  : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-              }`}
-            >
-              In Progress ({counts.in_progress})
-            </button>
+            {[
+              { key: "all",         label: `All (${counts.all})` },
+              { key: "pending",     label: `Pending (${counts.pending})` },
+              { key: "in_progress", label: `In Progress (${counts.in_progress})` },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setFilter(key as typeof filter)}
+                className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-all duration-150 sm:px-4 ${
+                  filter === key
+                    ? "bg-zinc-950 text-white [box-shadow:0_2px_8px_rgba(0,0,0,0.18)]"
+                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
           {counts.complete > 0 ? (
-            <p className="text-xs text-zinc-500">
-              Completed requests ({counts.complete}) are in History.
+            <p className="text-xs text-zinc-400">
+              {counts.complete} completed — visible in History.
             </p>
           ) : null}
 
@@ -122,13 +107,13 @@ export default function AdminRequestsPage() {
               title="No active requests"
               description={
                 filter === "all"
-                  ? "No pending or in-progress requests. Completed requests are in History."
+                  ? "No pending or in-progress requests."
                   : `No ${filter.replace("_", " ")} requests.`
               }
             />
           ) : (
-            <div className="space-y-3">
-              {filteredRequests.map((r) => {
+            <div className="space-y-2">
+              {filteredRequests.map((r, i) => {
                 const requestUser = dorm.users.find((u) => u.id === r.userId);
                 const tech = r.assignedTechnicianId
                   ? dorm.technicians.find((t) => t.id === r.assignedTechnicianId)
@@ -139,36 +124,29 @@ export default function AdminRequestsPage() {
                     key={r.id}
                     type="button"
                     onClick={() => setSelectedRequestId(r.id)}
-                    className="w-full rounded-2xl border border-zinc-200 p-4 text-left transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                    className="anim-enter w-full rounded-2xl border border-zinc-100 bg-zinc-50/50 p-4 text-left
+                      transition-all duration-200 hover:border-zinc-200 hover:bg-white hover:[box-shadow:var(--shadow-md)]"
+                    style={{ animationDelay: `${(i + 1) * 40}ms` } as React.CSSProperties}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="text-sm font-semibold">{r.title}</div>
-                        <div className="mt-1 text-xs text-zinc-500" suppressHydrationWarning>
+                        <div className="mt-1 text-xs text-zinc-400" suppressHydrationWarning>
                           {formatDateTime(r.createdAt)}
-                        </div>
-                        <div className="mt-1 text-xs text-zinc-500">
-                          Room:{" "}
+                          {" · "}
                           {requestUser
-                            ? [requestUser.building, requestUser.floor, requestUser.room]
-                                .filter(Boolean)
-                                .join("-") || "—"
+                            ? [requestUser.building, requestUser.floor, requestUser.room].filter(Boolean).join("-") || "—"
                             : "—"}
-                          <span className="mx-2">•</span>
+                          {" · "}
                           {requestUser?.name || "Unknown"}
-                          {tech && (
-                            <>
-                              <span className="mx-2">•</span>
-                              Tech: {tech.name}
-                            </>
-                          )}
+                          {tech ? ` · Tech: ${tech.name}` : ""}
                         </div>
                         {r.preferredAt ? (
-                          <div className="mt-1 text-xs text-zinc-600" suppressHydrationWarning>
-                            Preferred time: {formatDateTime(r.preferredAt)}
+                          <div className="mt-1 text-xs text-sky-600" suppressHydrationWarning>
+                            Preferred: {formatDateTime(r.preferredAt)}
                           </div>
                         ) : null}
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        <div className="mt-2 flex flex-wrap gap-1.5">
                           <Badge tone={toneForStatus(r.status)}>
                             {r.status.replaceAll("_", " ")}
                           </Badge>
@@ -177,9 +155,7 @@ export default function AdminRequestsPage() {
                           </Badge>
                         </div>
                       </div>
-                      <span className="text-xs font-medium text-zinc-500">
-                        View details →
-                      </span>
+                      <span className="shrink-0 text-xs font-medium text-zinc-400">View →</span>
                     </div>
                   </button>
                 );
@@ -191,73 +167,63 @@ export default function AdminRequestsPage() {
 
       {selectedRequest && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="request-detail-title"
           onClick={() => setSelectedRequestId(null)}
         >
           <div
-            className="w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="anim-pop w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl [box-shadow:var(--shadow-xl)]"
             onClick={(e) => e.stopPropagation()}
           >
             <Card className="w-full">
               <CardBody className="space-y-4">
                 <div className="flex items-start justify-between gap-4">
-                  <h2 id="request-detail-title" className="text-lg font-semibold">
+                  <h2 id="request-detail-title" className="text-lg font-bold">
                     Request Details
                   </h2>
                   <button
                     type="button"
                     onClick={() => setSelectedRequestId(null)}
-                    className="rounded-full p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                    className="rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                     aria-label="Close"
                   >
                     <X className="size-5" />
                   </button>
                 </div>
 
-                <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 sm:grid-cols-2">
+                <div className="grid gap-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4 sm:grid-cols-2">
                   <div>
-                    <div className="text-xs font-semibold text-zinc-500">Name</div>
-                    <div className="mt-1 text-sm font-medium text-zinc-900">
-                      {selectedUser?.name || "—"}
-                    </div>
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Name</div>
+                    <div className="mt-1 text-sm font-medium">{selectedUser?.name || "—"}</div>
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-zinc-500">Room No</div>
-                    <div className="mt-1 text-sm font-medium text-zinc-900">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Room</div>
+                    <div className="mt-1 text-sm font-medium">
                       {selectedUser
-                        ? [selectedUser.building, selectedUser.floor, selectedUser.room]
-                            .filter(Boolean)
-                            .join("-") || "—"
+                        ? [selectedUser.building, selectedUser.floor, selectedUser.room].filter(Boolean).join("-") || "—"
                         : "—"}
                     </div>
                   </div>
                   <div className="sm:col-span-2">
-                    <div className="text-xs font-semibold text-zinc-500">Phone</div>
-                    <div className="mt-1 text-sm font-medium text-zinc-900">
-                      {selectedUser?.phone || "—"}
-                    </div>
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Phone</div>
+                    <div className="mt-1 text-sm font-medium">{selectedUser?.phone || "—"}</div>
                   </div>
                 </div>
 
                 <div>
-                  <div className="text-xs font-semibold text-zinc-500">Issue</div>
-                  <div className="mt-1 rounded-xl border border-zinc-200 bg-white p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Issue</div>
+                  <div className="mt-2 rounded-2xl border border-zinc-100 bg-white p-3 [box-shadow:var(--shadow-xs)]">
                     <div className="text-sm font-semibold">{selectedRequest.title}</div>
-                    <div className="mt-2 text-sm text-zinc-700">
-                      {selectedRequest.description}
-                    </div>
+                    <div className="mt-1.5 text-sm text-zinc-600">{selectedRequest.description}</div>
                   </div>
                 </div>
 
                 {selectedRequest.preferredAt ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-                    <div className="text-xs font-semibold text-zinc-500">
-                      User preferred time for maintenance
-                    </div>
-                    <div className="mt-1 text-sm font-medium text-zinc-900" suppressHydrationWarning>
+                  <div className="rounded-2xl border border-sky-100 bg-sky-50 p-3">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-sky-500">Preferred time</div>
+                    <div className="mt-1 text-sm font-medium text-sky-800" suppressHydrationWarning>
                       {formatDateTime(selectedRequest.preferredAt)}
                     </div>
                   </div>
@@ -267,76 +233,57 @@ export default function AdminRequestsPage() {
                   <Badge tone={toneForStatus(selectedRequest.status)}>
                     {selectedRequest.status.replaceAll("_", " ")}
                   </Badge>
-                  <span className="text-xs text-zinc-500" suppressHydrationWarning>
+                  <span className="text-xs text-zinc-400" suppressHydrationWarning>
                     {formatDateTime(selectedRequest.createdAt)}
                   </span>
                 </div>
 
                 {selectedRequest.technicianNotes?.trim() ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-                    <div className="text-xs font-semibold text-zinc-500">
-                      Technician notes
-                    </div>
-                    <div className="mt-2 text-sm text-zinc-800">
-                      {selectedRequest.technicianNotes}
-                    </div>
+                  <div className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Technician notes</div>
+                    <div className="mt-2 text-sm text-zinc-700">{selectedRequest.technicianNotes}</div>
                   </div>
                 ) : null}
 
-                <div>
-                  <div className="mb-2 text-xs font-semibold text-zinc-600">
-                    Priority
-                  </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Priority</label>
                   <select
-                    className="h-10 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm font-medium"
+                    className="h-10 w-full rounded-2xl border border-zinc-200/80 bg-white px-4 text-sm font-medium outline-none
+                      [box-shadow:var(--shadow-xs)] focus:border-zinc-400"
                     value={selectedRequest.priority ?? "medium"}
                     onChange={(e) =>
-                      dorm.setRequestPriority({
-                        requestId: selectedRequest.id,
-                        priority: e.target.value as RequestPriority,
-                      })
+                      dorm.setRequestPriority({ requestId: selectedRequest.id, priority: e.target.value as RequestPriority })
                     }
                   >
-                    {PRIORITIES.map((p) => (
-                      <option key={p.value} value={p.value}>
-                        {p.label}
-                      </option>
-                    ))}
+                    {PRIORITIES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                   </select>
                 </div>
 
-                <div>
-                  <div className="mb-2 text-xs font-semibold text-zinc-600">
-                    Assign technician
-                  </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Assign technician</label>
                   {selectedRequest.acceptedByTechnician ? (
-                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+                    <div className="rounded-2xl border border-zinc-100 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">
                       Assigned to{" "}
-                      {dorm.technicians.find(
-                        (t) => t.id === selectedRequest.assignedTechnicianId
-                      )?.name ?? "—"}{" "}
+                      <span className="font-semibold text-zinc-800">
+                        {dorm.technicians.find((t) => t.id === selectedRequest.assignedTechnicianId)?.name ?? "—"}
+                      </span>{" "}
                       (accepted). Cannot reassign.
                     </div>
                   ) : (
                     <select
-                      className="h-10 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm font-medium"
+                      className="h-10 w-full rounded-2xl border border-zinc-200/80 bg-white px-4 text-sm font-medium outline-none
+                        [box-shadow:var(--shadow-xs)] focus:border-zinc-400"
                       value={selectedRequest.assignedTechnicianId ?? ""}
                       onChange={(e) =>
-                        dorm.assignTechnician({
-                          requestId: selectedRequest.id,
-                          technicianId: e.target.value || null,
-                        })
+                        dorm.assignTechnician({ requestId: selectedRequest.id, technicianId: e.target.value || null })
                       }
                     >
                       <option value="">Unassigned</option>
                       {dorm.technicians.map((t) => {
-                        const declined = (
-                          selectedRequest.declinedByTechnicianIds ?? []
-                        ).includes(t.id);
+                        const declined = (selectedRequest.declinedByTechnicianIds ?? []).includes(t.id);
                         return (
                           <option key={t.id} value={t.id}>
-                            {t.name}
-                            {declined ? " (Declined)" : ""}
+                            {t.name}{declined ? " (Declined)" : ""}
                           </option>
                         );
                       })}
@@ -344,12 +291,8 @@ export default function AdminRequestsPage() {
                   )}
                 </div>
 
-                <Button
-                  type="button"
-                  className="w-full"
-                  onClick={() => setSelectedRequestId(null)}
-                >
-                  Submit
+                <Button type="button" className="w-full" onClick={() => setSelectedRequestId(null)}>
+                  Done
                 </Button>
               </CardBody>
             </Card>

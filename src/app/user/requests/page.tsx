@@ -31,14 +31,14 @@ export default function UserRequestsPage() {
   }, [requests, session, filter]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-        <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-          Maintenance Request List
+    <div className="space-y-4 sm:space-y-5">
+      <div className="anim-enter flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
+          Maintenance Requests
         </h1>
-        <div className="flex gap-2">
+        <div className="inline-flex gap-1.5 rounded-2xl border border-zinc-200/80 bg-white/80 p-1 [box-shadow:var(--shadow-sm)]">
           <Button
-            variant={filter === "current" ? "primary" : "secondary"}
+            variant={filter === "current" ? "primary" : "ghost"}
             size="sm"
             type="button"
             onClick={() => setFilter("current")}
@@ -46,81 +46,74 @@ export default function UserRequestsPage() {
             Current
           </Button>
           <Button
-            variant={filter === "all" ? "primary" : "secondary"}
+            variant={filter === "all" ? "primary" : "ghost"}
             size="sm"
             type="button"
             onClick={() => setFilter("all")}
           >
-            All (History)
+            All history
           </Button>
         </div>
       </div>
 
-      <Card>
-        <CardBody>
-          <p className="text-sm text-zinc-600">
-            {filter === "current"
-              ? "Requests that are pending or in progress."
-              : "All your maintenance requests, including completed."}
-          </p>
-          {myRequests.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-center text-sm text-zinc-600">
-              No requests found.
-              <br />
-              <Link
-                href="/user/profile"
-                className="mt-2 inline-block font-semibold text-zinc-900 underline underline-offset-2"
-              >
-                Report an issue from Profile
-              </Link>
-            </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              {myRequests.map((r) => (
-                <div
-                  key={r.id}
-                  className="rounded-2xl border border-zinc-200 bg-white p-4"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
-                      <div className="font-semibold">{r.title}</div>
-                      <div className="mt-2 text-sm text-zinc-700">{r.description}</div>
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <Badge tone={toneForStatus(r.status)}>
-                          {r.status.replaceAll("_", " ")}
-                        </Badge>
-                        <span className="text-xs text-zinc-500">
-                          Created: {formatDateTime(r.createdAt)}
-                        </span>
-                        {r.preferredAt ? (
-                          <span className="text-xs text-zinc-600" suppressHydrationWarning>
-                            Preferred time: {formatDateTime(r.preferredAt)}
-                          </span>
-                        ) : null}
-                      </div>
-                      {r.technicianNotes ? (
-                        <div className="mt-3 rounded-xl bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
-                          <span className="font-semibold text-zinc-600">Technician notes: </span>
-                          {r.technicianNotes}
-                        </div>
-                      ) : null}
-                      {r.status !== "complete" ? (
-                        <Link
-                          href={`/user/requests/${r.id}/chat`}
-                          className="mt-3 flex items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
-                        >
-                          <span>Message</span>
-                          <span className="text-zinc-400">→</span>
-                        </Link>
-                      ) : null}
-                    </div>
+      {myRequests.length === 0 ? (
+        <div className="anim-enter delay-100 rounded-3xl border border-zinc-200/70 bg-white p-10 text-center [box-shadow:var(--shadow-sm)]">
+          <p className="text-sm font-medium text-zinc-500">No requests found.</p>
+          <Link
+            href="/user/profile"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-2xl bg-zinc-950 px-4 py-2 text-sm font-semibold text-white [box-shadow:0_2px_8px_rgba(0,0,0,0.18)] hover:bg-zinc-800"
+          >
+            Report an issue
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {myRequests.map((r, i) => (
+            <div
+              key={r.id}
+              className="anim-enter rounded-3xl border border-zinc-200/70 bg-white p-4 sm:p-5 [box-shadow:var(--shadow-md)]
+                transition-all duration-300 hover:-translate-y-0.5 hover:[box-shadow:var(--shadow-lg)]"
+              style={{ animationDelay: `${i * 60}ms` } as React.CSSProperties}
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold">{r.title}</div>
+                  <div className="mt-1.5 text-sm leading-relaxed text-zinc-600">{r.description}</div>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Badge tone={toneForStatus(r.status)}>
+                      {r.status.replaceAll("_", " ")}
+                    </Badge>
+                    <span className="text-xs text-zinc-400">
+                      {formatDateTime(r.createdAt)}
+                    </span>
+                    {r.preferredAt ? (
+                      <span className="rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-medium text-sky-700 ring-1 ring-sky-200/60" suppressHydrationWarning>
+                        Preferred: {formatDateTime(r.preferredAt)}
+                      </span>
+                    ) : null}
                   </div>
+                  {r.technicianNotes ? (
+                    <div className="mt-3 rounded-2xl border border-zinc-100 bg-zinc-50/80 px-3 py-2.5 text-sm text-zinc-700">
+                      <span className="font-semibold text-zinc-500">Technician: </span>
+                      {r.technicianNotes}
+                    </div>
+                  ) : null}
+                  {r.status !== "complete" ? (
+                    <Link
+                      href={`/user/requests/${r.id}/chat`}
+                      className="mt-3 flex items-center justify-between rounded-2xl border border-zinc-200/70 bg-zinc-50 px-4 py-2.5 text-sm font-semibold text-zinc-700
+                        transition-all duration-200 hover:bg-zinc-100 hover:[box-shadow:var(--shadow-sm)]"
+                    >
+                      <span>Message technician</span>
+                      <span className="text-zinc-400">→</span>
+                    </Link>
+                  ) : null}
                 </div>
-              ))}
+              </div>
             </div>
-          )}
-        </CardBody>
-      </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

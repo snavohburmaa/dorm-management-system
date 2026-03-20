@@ -62,40 +62,41 @@ export default function AdminDashboardPage() {
   }, [dorm.requests]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <Card>
+    <div className="space-y-4 sm:space-y-5">
+      <Card className="anim-enter">
         <CardBody>
-          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
             Dorm Control Center
           </h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Manage residents and technicians,
-            track maintenance requests, post updates, 
+          <p className="mt-1.5 text-sm text-zinc-500">
+            Manage residents and technicians, track maintenance requests,
             and keep every room safe and comfortable.
           </p>
         </CardBody>
       </Card>
 
-      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-        <Link href="/admin/users" className="block">
-          <Card className="transition-colors hover:border-zinc-300 hover:bg-zinc-50/50">
+      <div className="grid gap-3 sm:gap-4 lg:grid-cols-2">
+        <Link href="/admin/users" className="block anim-enter delay-50">
+          <Card lift>
             <CardBody className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold">Users and Technicians</div>
-                <span className="text-xs font-medium text-zinc-500">
-                  View all →
-                </span>
+                <div className="text-sm font-semibold">Users &amp; Technicians</div>
+                <span className="text-xs font-medium text-zinc-400">View all →</span>
               </div>
-              <div className="text-sm text-zinc-600">
-                {dorm.users.length} users, {dorm.technicians.length} technicians
+              <div className="flex gap-3">
+                <div className="rounded-2xl bg-zinc-100 px-3 py-1.5 text-sm font-semibold">
+                  {dorm.users.length} <span className="font-normal text-zinc-500">users</span>
+                </div>
+                <div className="rounded-2xl bg-zinc-100 px-3 py-1.5 text-sm font-semibold">
+                  {dorm.technicians.length} <span className="font-normal text-zinc-500">technicians</span>
+                </div>
               </div>
             </CardBody>
           </Card>
         </Link>
-
-        <Card>
+        <Card className="anim-enter delay-100">
           <CardBody className="space-y-3">
-            <div className="text-sm font-semibold">Reports</div>
+            <div className="text-sm font-semibold">Request overview</div>
             <div className="flex flex-wrap gap-2">
               <Badge tone="warning">Pending: {report.byStatus.pending}</Badge>
               <Badge tone="info">In progress: {report.byStatus.in_progress}</Badge>
@@ -104,16 +105,16 @@ export default function AdminDashboardPage() {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="anim-enter delay-150">
           <CardBody className="space-y-4">
-            <div className="text-sm font-semibold">Announcements</div>
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Title</div>
+            <div className="text-sm font-semibold">Post announcement</div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500">Title</label>
               <Input value={annTitle} onChange={(e) => setAnnTitle(e.target.value)} placeholder="Announcement title" />
             </div>
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Body</div>
-              <Textarea value={annBody} onChange={(e) => setAnnBody(e.target.value)} placeholder="Write announcement..." />
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500">Body</label>
+              <Textarea value={annBody} onChange={(e) => setAnnBody(e.target.value)} placeholder="Write announcement…" />
             </div>
             <Button
               onClick={() => {
@@ -128,13 +129,10 @@ export default function AdminDashboardPage() {
           </CardBody>
         </Card>
 
-        <Card>
+        <Card className="anim-enter delay-200">
           <CardBody className="space-y-3">
             <div className="text-sm font-semibold">Announcement history</div>
-            <div className="text-sm text-zinc-600">
-              Click an announcement to view and edit.
-            </div>
-            <div className="max-h-64 space-y-2 overflow-y-auto rounded-2xl border border-zinc-200">
+            <div className="max-h-64 overflow-y-auto rounded-2xl border border-zinc-100">
               {dorm.announcements.length === 0 ? (
                 <div className="px-4 py-6 text-center text-sm text-zinc-500">
                   No announcements yet.
@@ -145,15 +143,11 @@ export default function AdminDashboardPage() {
                     key={a.id}
                     type="button"
                     onClick={() => openEditModal(a.id)}
-                    className="w-full border-b border-zinc-100 px-4 py-3 text-left last:border-b-0 hover:bg-zinc-50"
+                    className="w-full border-b border-zinc-100 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-zinc-50"
                   >
                     <div className="text-sm font-semibold text-zinc-900">{a.title}</div>
-                    <div className="mt-0.5 text-xs text-zinc-500">
-                      {formatDateTime(a.createdAt)}
-                    </div>
-                    <span className="mt-1 inline-block text-xs font-medium text-zinc-500">
-                      View / Edit →
-                    </span>
+                    <div className="mt-0.5 text-xs text-zinc-500">{formatDateTime(a.createdAt)}</div>
+                    <span className="mt-1 inline-block text-xs font-medium text-zinc-400">View / Edit →</span>
                   </button>
                 ))
               )}
@@ -164,14 +158,14 @@ export default function AdminDashboardPage() {
 
       {selectedAnnouncement && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="announcement-edit-title"
           onClick={closeEditModal}
         >
           <div
-            className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl"
+            className="anim-pop w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl [box-shadow:var(--shadow-xl)]"
             onClick={(e) => e.stopPropagation()}
           >
             <Card className="w-full">

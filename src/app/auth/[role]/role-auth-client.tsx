@@ -80,16 +80,24 @@ export function RoleAuthClient({
   }
 
   return (
-    <div className="min-h-dvh bg-zinc-50 text-zinc-950">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-8 sm:px-5 sm:py-10">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/" className="text-sm font-semibold text-zinc-700 hover:text-zinc-950">
+    <div className="min-h-dvh bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,_#e4e4e7_0%,_#f7f7f8_70%)] text-zinc-950">
+      <main className="mx-auto flex w-full max-w-md flex-col gap-5 px-4 py-10 sm:px-5 sm:py-14">
+
+        {/* Back + tab switcher */}
+        <div className="anim-fade flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 transition-colors hover:text-zinc-900"
+          >
             ← Back
           </Link>
-          <div className="inline-flex w-full justify-center rounded-2xl bg-white p-1 shadow-sm ring-1 ring-zinc-200 sm:w-auto">
+          <div className="inline-flex w-full justify-center rounded-2xl border border-zinc-200/80 bg-white/80 p-1
+            [box-shadow:var(--shadow-sm)] sm:w-auto">
             <button
-              className={`rounded-2xl px-3 py-2 text-sm font-semibold ${
-                mode === "login" ? "bg-zinc-950 text-white" : "text-zinc-700 hover:bg-zinc-100"
+              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                mode === "login"
+                  ? "bg-zinc-950 text-white [box-shadow:0_2px_8px_rgba(0,0,0,0.2)]"
+                  : "text-zinc-600 hover:bg-zinc-100"
               }`}
               onClick={() => setMode("login")}
               type="button"
@@ -97,8 +105,10 @@ export function RoleAuthClient({
               Login
             </button>
             <button
-              className={`rounded-2xl px-3 py-2 text-sm font-semibold ${
-                mode === "register" ? "bg-zinc-950 text-white" : "text-zinc-700 hover:bg-zinc-100"
+              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                mode === "register"
+                  ? "bg-zinc-950 text-white [box-shadow:0_2px_8px_rgba(0,0,0,0.2)]"
+                  : "text-zinc-600 hover:bg-zinc-100"
               }`}
               onClick={() => setMode("register")}
               type="button"
@@ -108,36 +118,38 @@ export function RoleAuthClient({
           </div>
         </div>
 
-        <Card>
+        {/* Header card */}
+        <Card className="anim-enter delay-50">
           <CardBody>
-            <div className="text-sm font-semibold text-zinc-600">
+            <div className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
               {roleLabel(role)}
             </div>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1>
-            <p className="mt-2 text-sm text-zinc-600">
+            <h1 className="mt-2 text-2xl font-bold tracking-tight">{title}</h1>
+            <p className="mt-1.5 text-sm text-zinc-500">
               {mode === "register"
-                ? "After register, you will go to the next page directly."
-                : "Login to continue."}
+                ? "Create an account to get started."
+                : "Sign in to continue."}
             </p>
           </CardBody>
         </Card>
 
-        <Card>
+        {/* Form card */}
+        <Card className="anim-enter delay-100">
           <CardBody className="space-y-4">
             {mode === "register" ? (
-              <div className="space-y-2">
-                <div className="text-xs font-semibold text-zinc-600">Name</div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-zinc-500">Name</label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
               </div>
             ) : null}
 
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Email</div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500">Email</label>
               <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
             </div>
 
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-zinc-600">Password</div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-zinc-500">Password</label>
               <Input
                 type="password"
                 value={password}
@@ -147,25 +159,20 @@ export function RoleAuthClient({
             </div>
 
             {mode === "register" ? (
-              <div className="space-y-2">
-                <div className="text-xs font-semibold text-zinc-600">Phone (optional)</div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-zinc-500">Phone (optional)</label>
                 <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+95 9 ..." />
               </div>
             ) : null}
 
             {error ? (
-              <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-100">
+              <div className="anim-pop rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             ) : null}
 
-            <Button
-              className="w-full"
-              onClick={onSubmit}
-              type="button"
-              disabled={loading}
-            >
-              {loading ? "Please wait…" : mode === "register" ? "Create account" : "Login"}
+            <Button className="w-full" onClick={onSubmit} type="button" disabled={loading}>
+              {loading ? "Please wait…" : mode === "register" ? "Create account" : "Sign in"}
             </Button>
           </CardBody>
         </Card>

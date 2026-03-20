@@ -9,7 +9,13 @@ export function AppShell({
   className?: string;
 }) {
   return (
-    <div className={cn("min-h-dvh bg-zinc-50 text-zinc-950", className)}>
+    <div
+      className={cn(
+        "min-h-dvh text-zinc-950",
+        "bg-[radial-gradient(ellipse_at_top,_#f0f0f2_0%,_#f7f7f8_60%)]",
+        className,
+      )}
+    >
       {children}
     </div>
   );
